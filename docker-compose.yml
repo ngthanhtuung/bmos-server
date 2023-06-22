@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  mysqldb:
+    container_name: bird-meal
+    image: mysql:5.7
+    restart: unless-stopped
+    env_file:
+      - ./.env
+    environment:
+      - MYSQL_ROOT_PASSWORD=$MYSQL_PASSWORD
+      - MYSQL_DATABASE=$MYSQL_DB
+    ports:
+      - $MYSQL_PORT:3306
+    volumes:
+      - db:/var/lib/mysql
+volumes:
+  db:
