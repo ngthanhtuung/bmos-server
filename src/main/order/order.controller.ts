@@ -17,12 +17,12 @@ export class OrderController {
         private readonly orderService: OrderService,
     ) { }
 
-    @Post('/')
-    @hasRoles(RoleEnum.CUSTOMER)
-    @ApiBody({
-        type: [MealCheckDto]
-    })
-    async createOrder(@Body() data: MealCheckDto[]): Promise<any | undefined> {
-        return await this.orderService.createOrder(data);
-    }
+    // @Post('/')
+    // @hasRoles(RoleEnum.CUSTOMER)
+    // @ApiBody({
+    //     type: [MealCheckDto]
+    // })
+    // async createOrder(@Body() data: MealCheckDto[]): Promise<any | undefined> {
+    //     return await this.orderService.createOrder(data);
+    // }
 }

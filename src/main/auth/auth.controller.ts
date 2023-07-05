@@ -34,12 +34,12 @@ export class AuthController {
         return this.authService.login(user);
     }
 
-    @Post('/login-google')
-    @Public()
-    @ApiOkResponse({ description: 'Login successfully' })
-    async loginByGoogle(@Body() firebaseToken: LoginGoogleDto): Promise<ApiResponse<any> | undefined> {
-        return await this.authService.loginByGoogle(firebaseToken.token);
-    }
+    // @Post('/login-google')
+    // @Public()
+    // @ApiOkResponse({ description: 'Login successfully' })
+    // async loginByGoogle(@Body() firebaseToken: LoginGoogleDto): Promise<ApiResponse<any> | undefined> {
+    //     return await this.authService.loginByGoogle(firebaseToken.token);
+    // }
 
 
     @Post('/signup')
