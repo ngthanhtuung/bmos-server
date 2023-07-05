@@ -12,7 +12,7 @@ import { RoleEnum } from '../role/role.enum';
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class OrderController {
-
+    
     constructor(
         private readonly orderService: OrderService,
     ) { }
