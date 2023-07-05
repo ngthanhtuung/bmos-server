@@ -4,6 +4,7 @@ import { OrderController } from './order.controller';
 import { MealModule } from '../meal/meal.module';
 import { TypeOrmExModule } from 'src/type-orm/typeorm-ex.module';
 import { OrderRepository } from './order.repository';
+import { MealRepository } from '../meal/meal.repository';
 
 @Module({
   imports: [

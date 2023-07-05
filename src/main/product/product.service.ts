@@ -69,4 +69,7 @@ export class ProductService {
             throw new HttpException(new ApiResponse('Fail', err.message), err.status || HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    async updateQuantityProduct(productId: string, quantity: number): Promise<any | undefined> {
+    }
 }

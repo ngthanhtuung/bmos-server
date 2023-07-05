@@ -91,4 +91,22 @@ export class MealService {
             throw new HttpException(new ApiResponse('Fail', err.message), err.status || HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
+
+    async getTotalPriceOfMeal(meal: any, amountMeal: number): Promise<any | undefined> {
+        try {
+            let totalPrice = 0
+            if (meal) {
+                for (const productMeal of meal.productMeals) { //Loop through each product in meal to check if it is enough
+                    // console.log(`${productMeal.product.id}`)
+                    // console.log(`${productMeal.product.price}`)
+                    // console.log(`${productMeal.amount}`)
+                    totalPrice += amountMeal * productMeal.amount * productMeal.product.price
+                    // console.log(`Total Price: ${totalPrice}\n\n`)
+                }
+            }
+            return totalPrice;
+        } catch (err) {
+            throw new HttpException(new ApiResponse('Fail', err.message), err.status || HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
 }

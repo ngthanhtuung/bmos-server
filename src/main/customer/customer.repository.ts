@@ -10,7 +10,7 @@ import ApiResponse from 'src/shared/res/apiReponse';
 
 @CustomRepository(Customer)
 export default class CustomerRepository extends Repository<Customer> {
-
+    
     async signUp(
         data: CustomerCreateDto,
         fn: (customer: Customer) => Promise<boolean>
