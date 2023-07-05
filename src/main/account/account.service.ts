@@ -66,7 +66,7 @@ export class AccountService {
             const updatedUser = await this.accountRepository.updateProfile(userId, updateProfile);
             return new ApiResponse('Success', 'Update profile successfully', updatedUser);
         } catch (err) {
-            throw new HttpException(new ApiResponse('Fail', err.message), HttpStatus.INTERNAL_SERVER_ERROR)
+            throw new HttpException(new ApiResponse('Fail', err.message), err.status || HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
@@ -94,7 +94,7 @@ export class AccountService {
                 return new ApiResponse('Success', 'Delete user successfully');
             }
         } catch (err) {
-            throw new HttpException(new ApiResponse('Fail', err.message), HttpStatus.INTERNAL_SERVER_ERROR)
+            throw new HttpException(new ApiResponse('Fail', err.message), err.status || HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
@@ -111,7 +111,7 @@ export class AccountService {
                 return new ApiResponse('Success', 'Confirm email successfully');
             }
         } catch (err) {
-            throw new HttpException(new ApiResponse('Fail', err.message), HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new HttpException(new ApiResponse('Fail', err.message), err.status || HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -130,7 +130,7 @@ export class AccountService {
                 return new ApiResponse('Success', 'Change password successfully');
             }
         } catch (err) {
-            throw new HttpException(new ApiResponse('Fail', err.message), HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new HttpException(new ApiResponse('Fail', err.message), err.status || HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
