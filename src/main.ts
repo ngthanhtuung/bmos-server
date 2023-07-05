@@ -45,6 +45,7 @@ async function bootstrap() {
   // initialize the firebase admin app
   firebaseAdmin.initializeApp({
     credential: firebaseAdmin.credential.cert(firebaseConfig),
+    // storageBucket: 'gs://bmos-mma301.appspot.com'
   });
 
   //end set up firebase

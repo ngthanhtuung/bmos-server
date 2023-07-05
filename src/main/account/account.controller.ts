@@ -46,7 +46,7 @@ export class AccountController {
         return await this.accountService.updateUser(userId, updateProfile);
     }
 
-    @Put('/:userId/status/:status')
+    @Put('/:userId/:status')
     @ApiParam({
         name: 'status',
         enum: [StatusEnum.ACTIVE, StatusEnum.BAN],
