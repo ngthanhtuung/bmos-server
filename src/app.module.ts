@@ -10,9 +10,15 @@ import { RoleModule } from './main/role/role.module';
 import { AccountModule } from './main/account/account.module';
 import { CustomerModule } from './main/customer/customer.module';
 import { AuthModule } from './main/auth/auth.module';
-import { PassportModule } from '@nestjs/passport';
 import { StaffModule } from './main/staff/staff.module';
 import { MailModule } from './main/mail/mail.module';
+import { ProductModule } from './main/product/product.module';
+import { ProductCategoryModule } from './main/product_category/product_category.module';
+import { OrderModule } from './main/order/order.module';
+import { OrderDetailModule } from './main/order_detail/order_detail.module';
+import { MealModule } from './main/meal/meal.module';
+import { ProductMealModule } from './main/product_meal/product_meal.module';
+import { BirdModule } from './main/bird/bird.module';
 
 @Module({
   imports: [
@@ -32,7 +38,15 @@ import { MailModule } from './main/mail/mail.module';
     CustomerModule,
     RoleModule,
     StaffModule,
-    MailModule
+    MealModule,
+    ProductModule,
+    MailModule,
+    ProductCategoryModule,
+    OrderModule,
+    OrderDetailModule,
+    ProductMealModule,
+    BirdModule
+
   ],
   controllers: [AppController],
   providers: [AppService],
