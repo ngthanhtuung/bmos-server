@@ -19,6 +19,7 @@ import { OrderDetailModule } from './main/order_detail/order_detail.module';
 import { MealModule } from './main/meal/meal.module';
 import { ProductMealModule } from './main/product_meal/product_meal.module';
 import { BirdModule } from './main/bird/bird.module';
+import { DeliveryModule } from './main/delivery/delivery.module';
 
 @Module({
   imports: [
@@ -45,7 +46,8 @@ import { BirdModule } from './main/bird/bird.module';
     OrderModule,
     OrderDetailModule,
     ProductMealModule,
-    BirdModule
+    BirdModule,
+    DeliveryModule,
 
   ],
   controllers: [AppController],
