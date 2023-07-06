@@ -31,6 +31,12 @@ export class ProductController {
         return await this.productService.getProductByCategory(categoryId);
     }
 
+    @hasRoles(RoleEnum.ADMIN, RoleEnum.CUSTOMER, RoleEnum.STAFF)
+    @Get("/")
+    async getProduct(): Promise<any | undefined> {
+        return await this.productService.getAllProduct();
+    }
+    
     @hasRoles(RoleEnum.ADMIN)
     @Post("/")
     async createProduct(@Body() data: ProductCreateDto): Promise<any | undefined> {
