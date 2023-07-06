@@ -32,11 +32,10 @@ export class CustomerService {
         return await this.customerRepository.signUp(data, callback);
     }
 
-    async getUserProfile(id: string): Promise<any | undefined> {
-
-        console.log(this.customerRepository)
+    async getUser(id: string): Promise<any | undefined> {
         const customer = await this.customerRepository.findOne({
-            where: { }
+            where: { account: { id: id } }
         })
+        return customer;
     }
 }

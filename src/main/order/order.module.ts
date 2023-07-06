@@ -5,11 +5,13 @@ import { MealModule } from '../meal/meal.module';
 import { TypeOrmExModule } from 'src/type-orm/typeorm-ex.module';
 import { OrderRepository } from './order.repository';
 import { MealRepository } from '../meal/meal.repository';
+import { CustomerModule } from '../customer/customer.module';
 
 @Module({
   imports: [
     TypeOrmExModule.forCustomRepository([OrderRepository]),
-    MealModule
+    MealModule,
+    CustomerModule
   ],
   providers: [OrderService],
   controllers: [OrderController]

@@ -21,6 +21,7 @@ export class MealRepository extends Repository<Meal> {
                 'product.image',
                 'product.status'
             ])
+            .where({createdBy: ''})
             .getMany();
         return meal;
     }

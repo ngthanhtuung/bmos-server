@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
+import Order from '../order/order.entity';
 
 @Injectable()
 export class DeliveryService {
@@ -27,7 +28,6 @@ export class DeliveryService {
             return err.response.data.message;
         }
     }
-
 
     async getDistrict(provinceID: number): Promise<any | undefined> {
         try {
@@ -67,4 +67,8 @@ export class DeliveryService {
         }
     }
 
+
+    async createOrder(order: Order): Promise<any | undefined> {
+        
+    }
 }

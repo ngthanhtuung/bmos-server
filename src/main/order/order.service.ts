@@ -1,3 +1,4 @@
+import { CustomerService } from './../customer/customer.service';
 import { OrderRepository } from './order.repository';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { MealCheckDto } from '../meal/dto/meal-check.dto';
@@ -13,8 +14,21 @@ export class OrderService {
 
     constructor(
         private readonly mealService: MealService,
+        private readonly customerService: CustomerService,
         private readonly orderRepository: OrderRepository
     ) { }
+
+    async getAllOrder(user: Account): Promise<any | undefined> {
+        try {
+            const orders = await this.orderRepository.find({
+                where: { customer: { account: { id: user.id } } }
+            })
+            return new ApiResponse('Success', 'Get all order successfully', orders);
+        } catch (err) {
+            throw new HttpException(new ApiResponse('Fail', err.message), err.status || HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
 
     async createOrder(order: OrderCreateDto, user: Account): Promise<any | undefined> {
         try {
@@ -28,10 +42,29 @@ export class OrderService {
                 return await this.mealService.getTotalPriceOfMeal(meal, amountMeal)
             }
             const result = await this.orderRepository.createOrder(order, user, callback);
-            // lafm tiep neu khong co san pham nao thieu thi tao order
+            if (result) {
+                return new ApiResponse('Success', 'Create order successfully', result);
+            }
         } catch (err) {
             throw new HttpException(new ApiResponse('Fail', err.message, err.response.data || undefined), err.status || HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
+    async cancelOrder(orderId: string): Promise<any | undefined> {
+        try {
+            const cancelOrder = await this.orderRepository.findOne({
+                where: { id: orderId },
+                relations: ['orderDetails', 'orderDetails.meal', 'orderDetails.meal.productMeals', 'orderDetails.meal.productMeals.product']
+            })
+            if (cancelOrder) {
+                const callback = async (meal: any, amountMeal: number): Promise<any> => {
+                    return await this.mealService.cancelOrderMeal(meal, amountMeal)
+                }
+
+                const result = await this.orderRepository.cancelOrder(cancelOrder, callback);
+            }
+        } catch (err) {
+            throw new HttpException(new ApiResponse('Fail', err.message), err.status || HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
 }

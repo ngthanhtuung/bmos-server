@@ -71,5 +71,6 @@ export class ProductService {
     }
 
     async updateQuantityProduct(productId: string, quantity: number): Promise<any | undefined> {
+        return await this.productRepository.updateQuantity(productId, quantity);
     }
 }

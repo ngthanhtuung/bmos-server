@@ -28,6 +28,10 @@ export default class Order extends BaseEntity {
     }
     
     @AutoMap()
+    @Column('varchar', { name: 'orderCode', nullable: true })
+    public orderCode: string;
+
+    @AutoMap()
     @Column('double', { name: 'totalPrice', nullable: false, default: 0 })
     public totalPrice: number;
 
