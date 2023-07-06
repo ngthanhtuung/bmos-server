@@ -3,11 +3,11 @@ import { MealService } from './meal.service';
 import { MealCreateDto } from './dto/meal-create.dto';
 import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import Account from '../account/account.entity';
-import { GetUser } from 'src/decorators/getUser.decorator';
 import { RolesGuard } from '../auth/role/roles.guard';
 import { JwtAuthGuard } from '../auth/jwt-auth/jwt-auth.guard';
 import { hasRoles } from '../auth/role/roles.decorator';
 import { MealUpdateDto } from './dto/meal-update.dto';
+import { GetUser } from 'src/decorators/getUser.decorator';
 
 @Controller('meal')
 @ApiTags('Meal')

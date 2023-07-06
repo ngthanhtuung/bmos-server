@@ -1,7 +1,6 @@
 import { ProductMealService } from './../product_meal/product_meal.service';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { MealCreateDto } from './dto/meal-create.dto';
-import ApiResponse from 'src/shared/res/apiReponse';
 import Meal from './meal.entity';
 import { MealRepository } from './meal.repository';
 import Account from '../account/account.entity';
@@ -10,6 +9,7 @@ import { BirdService } from '../bird/bird.service';
 import { MealCheckDto } from './dto/meal-check.dto';
 import { ProductService } from '../product/product.service';
 import { MealUpdateDto } from './dto/meal-update.dto';
+import ApiResponse from '../../shared/res/apiReponse';
 
 @Injectable()
 export class MealService {
