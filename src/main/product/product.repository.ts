@@ -56,7 +56,16 @@ export class ProductRepository extends Repository<Product> {
             throw new HttpException(err, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    async getAllProduct(): Promise<any | undefined> {
+        try {
+            const products = await this.find()
+            if (products) {
+                return new ApiResponse('Success', 'Get product by category successfully', products);
+            }
+        } catch (err) {
+            throw new HttpException(err, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
     async updateProduct(productId: string, data: ProductUpdateDto): Promise<any | undefined> {
         try {
             const updated = await this.createQueryBuilder()

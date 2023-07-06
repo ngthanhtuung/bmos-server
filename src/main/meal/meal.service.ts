@@ -1,7 +1,6 @@
 import { ProductMealService } from './../product_meal/product_meal.service';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { MealCreateDto } from './dto/meal-create.dto';
-import ApiResponse from 'src/shared/res/apiReponse';
 import Meal from './meal.entity';
 import { MealRepository } from './meal.repository';
 import Account from '../account/account.entity';
@@ -9,6 +8,8 @@ import { RoleEnum } from '../role/role.enum';
 import { BirdService } from '../bird/bird.service';
 import { MealCheckDto } from './dto/meal-check.dto';
 import { ProductService } from '../product/product.service';
+import { MealUpdateDto } from './dto/meal-update.dto';
+import ApiResponse from '../../shared/res/apiReponse';
 
 @Injectable()
 export class MealService {
@@ -25,6 +26,17 @@ export class MealService {
             const meals = await this.mealRepository.getAllMeals();
             if (meals) {
                 return new ApiResponse('Success', 'Get all meals successfully', meals);
+            }
+        } catch (err) {
+            throw new HttpException(new ApiResponse('Fail', err.message), err.status || HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+    async getAllMealByCustomer(userId: string): Promise<any | undefined> {
+        try {
+            const meals = await this.mealRepository.getAllMealsByCustomer(userId);
+            if (meals) {
+                return new ApiResponse('Success', 'Get all meals successfully of customer', meals);
             }
         } catch (err) {
             throw new HttpException(new ApiResponse('Fail', err.message), err.status || HttpStatus.INTERNAL_SERVER_ERROR)
@@ -49,6 +61,7 @@ export class MealService {
             const meal = new Meal();
             meal.title = data.title;
             meal.description = data.description;
+            meal.image = data.image;
             meal.bird = await this.birdService.getBirdById(data.birdId)
             if (user.role.name === RoleEnum.CUSTOMER) {
                 meal.createdBy = user.id;
@@ -144,4 +157,52 @@ export class MealService {
             throw new HttpException(new ApiResponse('Fail', err.message), err.status || HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
+
+    async updateMeal(data: MealUpdateDto, user: Account) {
+        try {
+            const checkExistMeal = await this.mealRepository.getMealById(data.id);
+            console.log("user:", user);
+
+            console.log("checkExistMeal:", checkExistMeal);
+            // Check meals exist
+            if (checkExistMeal) {
+                // Check create by user
+                if (user.id !== checkExistMeal.createdBy) {
+                    throw new HttpException(new ApiResponse('Fail', 'Meals do not belong to the user!!!'), HttpStatus.BAD_REQUEST)
+                }
+                // check bird
+                const bird = await this.birdService.getBirdById(data.birdId)
+                if (!bird) {
+                    throw new HttpException(new ApiResponse('Fail', 'Bird do not exist!!!'), HttpStatus.NOT_FOUND)
+                }
+                const meal: MealUpdateDto = {
+                    title: data.title,
+                    description: data.description,
+                    status: data.status,
+                    birdId: bird.id,
+                    image: data.image,
+                    id: data.id,
+                    products: data.products
+                }
+                const newMealUpdate = await this.mealRepository.updateMeal(meal);
+                console.log("newMealUpdate:", newMealUpdate);
+                if (newMealUpdate) {
+                    // delete meal in product_meals
+                    const flagCheckDelete = await this.productMealService.deleteProductMeal(newMealUpdate.id);
+                    console.log("flagCheckDelete:", flagCheckDelete);
+                    if (flagCheckDelete) {
+                        await this.productMealService.insertProductMeal(newMealUpdate.id, data.products);
+                        const response = await this.mealRepository.getMealById(newMealUpdate.id);
+                        return new ApiResponse('Success', 'Update meal successfully', response);
+                    }
+                }
+            } else {
+                throw new HttpException(new ApiResponse('Fail', 'Meals do not exist!!!'), HttpStatus.NOT_FOUND)
+            }
+
+        } catch (err) {
+            throw new HttpException(new ApiResponse('Fail', err.message), HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
 }
+

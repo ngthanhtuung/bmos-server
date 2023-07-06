@@ -1,6 +1,6 @@
+import { IsNotEmpty } from "class-validator";
+import { MealCreateDto } from "./meal-create.dto";
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsNotEmptyObject, IsNumber } from "class-validator";
-
 
 export class ProductInMealDto {
 
@@ -10,9 +10,14 @@ export class ProductInMealDto {
     public amount: number;
 
 }
+export class MealUpdateDto {
+    @IsNotEmpty()
+    @ApiProperty()
+    public id: string;
 
-
-export class MealCreateDto {
+    @IsNotEmpty()
+    @ApiProperty()
+    public status: boolean;
 
     @IsNotEmpty()
     @ApiProperty()
@@ -36,5 +41,3 @@ export class MealCreateDto {
     })
     public products: ProductInMealDto[];
 }
-
-

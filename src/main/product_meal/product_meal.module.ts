@@ -4,9 +4,7 @@ import { TypeOrmExModule } from 'src/type-orm/typeorm-ex.module';
 import ProductMealRepository from './product_meal.repository';
 
 @Module({
-  imports: [
-    TypeOrmExModule.forCustomRepository([ProductMealRepository])
-  ],
+  imports: [TypeOrmExModule.forCustomRepository([ProductMealRepository])],
   providers: [ProductMealService],
   exports: [ProductMealService],
 })
