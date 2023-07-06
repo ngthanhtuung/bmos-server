@@ -22,7 +22,13 @@ export class ProductService {
             throw new HttpException(new ApiResponse('Fail', err.message), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    async getAllProduct(): Promise<any | undefined> {
+        try {
+            return await this.productRepository.getAllProduct();
+        } catch (err) {
+            throw new HttpException(new ApiResponse('Fail', err.message), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
     async updateProduct(productId: string, data: ProductUpdateDto): Promise<any | undefined> {
         try {
             const product = await this.productRepository.findOne({ where: { id: productId } });

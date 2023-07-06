@@ -12,6 +12,8 @@ export class ProductMealService {
     async insertProductMeal(mealId: string, data: any[]): Promise<any | undefined> {
         return await this.productMealRepository.insertProductMeal(mealId, data);
     }
-
+    async deleteProductMeal(mealId: string): Promise<any | undefined> {
+        return await this.productMealRepository.deleteProductMeal(mealId);
+    }
    
 }

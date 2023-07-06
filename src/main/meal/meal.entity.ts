@@ -23,7 +23,10 @@ export default class Meal extends BaseEntity {
     @AutoMap()
     @Column('boolean', { name: 'status', nullable: false, default: true })
     public status: boolean;
-
+    @AutoMap()
+    @Column('nvarchar', { name: 'image', nullable: true })
+    public image: string;
+    
     @AutoMap()
     @OneToMany(() => ProductMeal, (productMeals) => productMeals.meal, { onDelete: 'CASCADE' })
     public productMeals: ProductMeal[];
