@@ -18,7 +18,11 @@ export class MealController {
     constructor(
         private readonly mealService: MealService,
     ) { }
-
+        
+    @Get('/title')
+    async getAllMealByTitle(@Query('title') title: string) {
+        return await this.mealService.getAllMealByTitle(title);
+    }
     @Get('/')
     async getAllMeal() {
         return await this.mealService.getAllMeal();
@@ -26,6 +30,10 @@ export class MealController {
     @Get('/customer')
     async getAllMealByCustomer(@GetUser() user: Account) {
         return await this.mealService.getAllMealByCustomer(user.id);
+    }
+    @Get('/:mealId')
+    async getMealDetail(@Param('mealId') mealId: string) {
+        return await this.mealService.getMealDetail(mealId);
     }
     @Get('/:birdId')
     async getMealByBird(@Param('birdId') birdId: string) {
