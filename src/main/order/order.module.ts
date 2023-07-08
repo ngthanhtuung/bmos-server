@@ -6,12 +6,14 @@ import { TypeOrmExModule } from 'src/type-orm/typeorm-ex.module';
 import { OrderRepository } from './order.repository';
 import { MealRepository } from '../meal/meal.repository';
 import { CustomerModule } from '../customer/customer.module';
+import { DeliveryModule } from '../delivery/delivery.module';
 
 @Module({
   imports: [
     TypeOrmExModule.forCustomRepository([OrderRepository]),
     MealModule,
-    CustomerModule
+    CustomerModule,
+    DeliveryModule
   ],
   providers: [OrderService],
   controllers: [OrderController]

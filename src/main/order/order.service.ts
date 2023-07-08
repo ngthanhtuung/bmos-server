@@ -8,6 +8,7 @@ import e from 'express';
 import Account from '../account/account.entity';
 import { OrderCreateDto } from './dto/order-create.dto';
 import Meal from '../meal/meal.entity';
+import { DeliveryService } from '../delivery/delivery.service';
 
 @Injectable()
 export class OrderService {
@@ -15,7 +16,8 @@ export class OrderService {
     constructor(
         private readonly mealService: MealService,
         private readonly customerService: CustomerService,
-        private readonly orderRepository: OrderRepository
+        private readonly orderRepository: OrderRepository,
+        private readonly deliveryService: DeliveryService
     ) { }
 
     async getAllOrder(user: Account): Promise<any | undefined> {
@@ -29,7 +31,6 @@ export class OrderService {
         }
     }
 
-
     async createOrder(order: OrderCreateDto, user: Account): Promise<any | undefined> {
         try {
             const meals = order.meals
@@ -41,9 +42,14 @@ export class OrderService {
             const callback = async (meal: any, amountMeal: number): Promise<any> => {
                 return await this.mealService.getTotalPriceOfMeal(meal, amountMeal)
             }
-            const result = await this.orderRepository.createOrder(order, user, callback);
-            if (result) {
-                return new ApiResponse('Success', 'Create order successfully', result);
+            const orderResult = await this.orderRepository.createOrder(order, user, callback);
+            console.log("result in service:", orderResult);
+            if (orderResult) {
+                const response = await this.deliveryService.createOrder(orderResult)
+                console.log("response in service order:",response);
+                if (response.status === 200) {
+                    return new ApiResponse('Success', 'Create order successfully', orderResult);
+                }
             }
         } catch (err) {
             throw new HttpException(new ApiResponse('Fail', err.message, err.response.data || undefined), err.status || HttpStatus.INTERNAL_SERVER_ERROR)

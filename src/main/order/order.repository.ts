@@ -10,7 +10,6 @@ import Account from '../account/account.entity';
 
 @CustomRepository(Order)
 export class OrderRepository extends Repository<Order> {
-
     async createOrder(
         data: OrderCreateDto,
         user: any,
@@ -38,6 +37,7 @@ export class OrderRepository extends Repository<Order> {
                     customer: customer,
                 })
             )
+            console.log("Order:", order);
             const meals = data.meals; //By the following data assign, have array object meals=[{ "id", "amount" }], get this to prepare create order detail
             let totalPriceOrder = 0;
             for (let i = 0; i < meals.length; i++) {
