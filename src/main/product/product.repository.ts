@@ -9,7 +9,6 @@ import { ProductUpdateDto } from "./dto/product-update.dto";
 @CustomRepository(Product)
 export class ProductRepository extends Repository<Product> {
 
-
     async createProduct(data: ProductCreateDto): Promise<any | undefined> {
         const queryRunner = this.manager.connection.createQueryRunner();
         await queryRunner.connect();
@@ -42,7 +41,6 @@ export class ProductRepository extends Repository<Product> {
         }
 
     }
-
     async getProductByCategory(categoryId: string): Promise<any | undefined> {
         try {
             const products = await this.createQueryBuilder('product')
@@ -59,8 +57,20 @@ export class ProductRepository extends Repository<Product> {
     async getAllProduct(): Promise<any | undefined> {
         try {
             const products = await this.find()
+            console.log("products:", products);
             if (products) {
                 return new ApiResponse('Success', 'Get product by category successfully', products);
+            }
+        } catch (err) {
+            throw new HttpException(err, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    async getAllProductByName(name: string): Promise<any | undefined> {
+        try {
+            const query = `SELECT * FROM product WHERE productName like '%${name}%';`
+            const result = await this.query(query);
+            if (result) {
+                return new ApiResponse('Success', 'Get product by name successfully', result);
             }
         } catch (err) {
             throw new HttpException(err, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -88,7 +98,6 @@ export class ProductRepository extends Repository<Product> {
             throw new HttpException(new ApiResponse('Fail', err.message), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
     async updateStatus(productId: string, status: boolean): Promise<any | undefined> {
         try {
             const updatedStatus = await this.createQueryBuilder()
@@ -103,6 +112,17 @@ export class ProductRepository extends Repository<Product> {
             }
         } catch (err) {
             throw new HttpException(new ApiResponse('Fail', err.message), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    async getProductDetail(productId: string): Promise<any | undefined> {
+        try {
+            const query = `SELECT * FROM product WHERE product.id = '${productId}'`
+            const product = await this.query(query)
+            if (product) {
+                return new ApiResponse('Success', 'Get product detail successfully', product);
+            }
+        } catch (err) {
+            throw new HttpException(err, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

@@ -29,6 +29,11 @@ export class MealRepository extends Repository<Meal> {
             .getMany();
         return meal;
     }
+    async getAllMealsByName(name: string): Promise<any | undefined> {
+        const query = `SELECT * FROM meal WHERE title like '%${name}%';`
+        const meal = await this.query(query)
+        return meal;
+    }
     async getAllMealsByCustomer(userId: string): Promise<any | undefined> {
         const meal = await this.createQueryBuilder('meal')
             .leftJoinAndSelect('meal.bird', 'bird')
