@@ -6,5 +6,5 @@ import { Repository } from "typeorm";
 @CustomRepository(Order)
 export class OrderRepository extends Repository<Order> {
 
-    
+
 }
