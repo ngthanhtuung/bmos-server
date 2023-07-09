@@ -2,6 +2,7 @@ import { Body, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
 import Order from '../order/order.entity';
+import { ShippingFeeDto } from './dto/get-fee.dto';
 
 @Injectable()
 export class DeliveryService {
@@ -62,6 +63,31 @@ export class DeliveryService {
                 WardName: item.WardName
             }))
             return result;
+        } catch (err) {
+            return err.response.data.message;
+        }
+    }
+
+    async getShippingFee(data: ShippingFeeDto): Promise<any | undefined> {
+        try {
+            const bodyData = {
+                "to_ward_code": data.wardCode,
+                "to_district_id": data.districtId,
+                "service_id": 53320,
+                "weight": 500
+            }
+
+            const response = await axios.post(
+                `https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/fee`,
+                bodyData,
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'token': this.configService.get<string>('GHN_TOKEN'),
+                        'shop_id': this.configService.get<string>('GHN_SHOP_ID')
+                    }
+                })
+            return response.data.data.total;
         } catch (err) {
             return err.response.data.message;
         }
