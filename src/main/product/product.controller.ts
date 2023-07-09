@@ -2,7 +2,6 @@ import { ApiBearerAuth, ApiNotFoundResponse, ApiParam, ApiTags } from '@nestjs/s
 import { ProductCreateDto } from './dto/product-create.dto';
 import { ProductService } from './product.service';
 import { Body, Controller, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
-import { IsNotEmpty } from 'class-validator';
 import { ProductUpdateDto } from './dto/product-update.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/role/roles.guard';
@@ -24,7 +23,16 @@ export class ProductController {
     async checkProductAvailable(@Param('productId') productId: string, @Query('quantity') quantity: number): Promise<any | undefined> {
         return await this.productService.checkAvailableProduct(productId, quantity);
     }
-
+    @hasRoles(RoleEnum.ADMIN, RoleEnum.CUSTOMER, RoleEnum.STAFF)
+    @Get("/search")
+    async getProductByName(@Query('name') name: string): Promise<any | undefined> {
+        return await this.productService.getAllProductByName(name);
+    }
+    @hasRoles(RoleEnum.ADMIN, RoleEnum.CUSTOMER, RoleEnum.STAFF)
+    @Get("/detail/:productId")
+    async getProductDetail(@Param('productId') productId: string): Promise<any | undefined> {
+        return await this.productService.getProductDetail(productId);
+    }
     @hasRoles(RoleEnum.ADMIN, RoleEnum.CUSTOMER, RoleEnum.STAFF)
     @Get("/:categoryId")
     async getProductByCategory(@Param('categoryId') categoryId: string): Promise<any | undefined> {
@@ -36,7 +44,7 @@ export class ProductController {
     async getProduct(): Promise<any | undefined> {
         return await this.productService.getAllProduct();
     }
-    
+
     @hasRoles(RoleEnum.ADMIN)
     @Post("/")
     async createProduct(@Body() data: ProductCreateDto): Promise<any | undefined> {
