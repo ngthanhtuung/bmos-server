@@ -20,6 +20,7 @@ import { MealModule } from './main/meal/meal.module';
 import { ProductMealModule } from './main/product_meal/product_meal.module';
 import { BirdModule } from './main/bird/bird.module';
 import { DeliveryModule } from './main/delivery/delivery.module';
+import { PaymentModule } from './main/payment/payment.module';
 
 @Module({
   imports: [
@@ -41,14 +42,14 @@ import { DeliveryModule } from './main/delivery/delivery.module';
     StaffModule,
     MealModule,
     ProductModule,
+    OrderModule,
+    PaymentModule,
     MailModule,
     ProductCategoryModule,
-    OrderModule,
     OrderDetailModule,
     ProductMealModule,
     BirdModule,
     DeliveryModule,
-
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -4,6 +4,7 @@ import { DeliveryService } from './delivery.service';
 
 @Module({
   controllers: [DeliveryController],
-  providers: [DeliveryService]
+  providers: [DeliveryService],
+  exports: [DeliveryService]
 })
-export class DeliveryModule {}
+export class DeliveryModule { }

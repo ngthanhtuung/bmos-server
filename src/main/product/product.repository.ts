@@ -114,6 +114,25 @@ export class ProductRepository extends Repository<Product> {
             throw new HttpException(new ApiResponse('Fail', err.message), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    async updateQuantity(productId: string, quantity: number): Promise<any | undefined> {
+        try {
+            const product = await this.createQueryBuilder()
+                .update(Product)
+                .set({
+                    remainQuantity: quantity
+                })
+                .where('id = :productId', { productId: productId })
+                .execute();
+            if (product.affected > 0) {
+                return true;
+            }
+        } catch (err) {
+            return false;
+        }
+    }
+
+    
     async getProductDetail(productId: string): Promise<any | undefined> {
         try {
             const query = `SELECT * FROM product WHERE product.id = '${productId}'`

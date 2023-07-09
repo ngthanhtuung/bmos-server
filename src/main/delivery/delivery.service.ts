@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Body, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
+import Order from '../order/order.entity';
 
 @Injectable()
 export class DeliveryService {
@@ -27,7 +28,6 @@ export class DeliveryService {
             return err.response.data.message;
         }
     }
-
 
     async getDistrict(provinceID: number): Promise<any | undefined> {
         try {
@@ -67,4 +67,26 @@ export class DeliveryService {
         }
     }
 
+    async createOrder(order: Order): Promise<any | undefined> {
+        console.log("Order:", order);
+
+        const response = await axios.post(`https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/create`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'token': this.configService.get<string>('GHN_TOKEN'),
+                'shop_id': this.configService.get<string>('GHN_SHOP_ID')
+            },
+            Body: {
+                "to_name": order.name,
+                "to_phone": order.phone,
+                "to_address": order.shippingAddress,
+                "to_ward_code": order.shippingWardCode,
+                "to_district_id": order.shippingDistrictCode,
+                "content": order.id,
+                "name": order.id
+            }
+        })
+        console.log("response:", response);
+        return response
+    }
 }

@@ -10,7 +10,19 @@ export class OrderDTO extends BaseDTO {
     public orderDate: Date;
 
     @AutoMap()
+    public orderCode: string;
+
+    @AutoMap()
     public totalPrice: number;
+
+    @AutoMap()
+    public shippingAddress: string;
+
+    @AutoMap()
+    public shippingWardCode: string;
+
+    @AutoMap()
+    public shippingDistrictCode: number;
 
     @AutoMap()
     public orderStatus: OrderStatusEnum;

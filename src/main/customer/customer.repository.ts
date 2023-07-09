@@ -55,7 +55,4 @@ export default class CustomerRepository extends Repository<Customer> {
             queryRunner.release();
         }
     }
-
-
-
 }
