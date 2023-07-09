@@ -38,7 +38,6 @@ export class OrderService {
             if (unavailableProducts.length !== 0) {
                 throw new HttpException(new ApiResponse('Fail', 'Product is not enough', unavailableProducts), HttpStatus.BAD_REQUEST);
             }
-
             const callback = async (meal: any, amountMeal: number): Promise<any> => {
                 return await this.mealService.getTotalPriceOfMeal(meal, amountMeal)
             }
@@ -46,9 +45,15 @@ export class OrderService {
             console.log("result in service:", orderResult);
             if (orderResult) {
                 const response = await this.deliveryService.createOrder(orderResult)
-                console.log("response in service order:",response);
-                if (response.status === 200) {
+                console.log("response in service order:", response);
+                if (response != undefined) {
+                    orderResult.orderCode = response.data.order_code
+                    orderResult.orderUrl = `https://tracking.ghn.dev/?order_code=${response.data.order_code}`
+                    await this.orderRepository.save(orderResult);
                     return new ApiResponse('Success', 'Create order successfully', orderResult);
+                } else {
+                    await this.cancelOrder(orderResult.id)
+                    return new ApiResponse('Fail', 'Create order fail');
                 }
             }
         } catch (err) {
@@ -66,11 +71,13 @@ export class OrderService {
                 const callback = async (meal: any, amountMeal: number): Promise<any> => {
                     return await this.mealService.cancelOrderMeal(meal, amountMeal)
                 }
-
                 const result = await this.orderRepository.cancelOrder(cancelOrder, callback);
+                return result
             }
         } catch (err) {
             throw new HttpException(new ApiResponse('Fail', err.message), err.status || HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
+
+
 }

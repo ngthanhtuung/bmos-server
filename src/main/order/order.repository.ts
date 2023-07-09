@@ -6,6 +6,7 @@ import { OrderCreateDto } from "./dto/order-create.dto";
 import { HttpException, HttpStatus } from "@nestjs/common";
 import Meal from '../meal/meal.entity';
 import Account from '../account/account.entity';
+import { OrderStatusEnum } from './order-status.enum';
 
 
 @CustomRepository(Order)
@@ -14,7 +15,7 @@ export class OrderRepository extends Repository<Order> {
     async createOrder(
         data: OrderCreateDto,
         user: any,
-    fn: (meal: any, amountMeal: number) => Promise<any>
+        fn: (meal: any, amountMeal: number) => Promise<any>
     ): Promise<any | undefined> {
         const queryRunner = this.manager.connection.createQueryRunner();
         await queryRunner.connect();
@@ -48,7 +49,7 @@ export class OrderRepository extends Repository<Order> {
                 }) //Get meal to create order detail
                 let totalPrice = await fn(meal, amountMeal); //After finding Meal, we will call a callback function to calculate the total price of the meal from orderMealService because Order doesn't have any relationship directly with the Product
                 totalPriceOrder += totalPrice;
-                const orderDetail = await queryRunner.manager.save(
+                await queryRunner.manager.save(
                     queryRunner.manager.create('OrderDetail', {
                         amount: amountMeal,
                         totalPrice: totalPrice,
@@ -80,13 +81,14 @@ export class OrderRepository extends Repository<Order> {
         try {
             for (let i = 0; i < cancelOrder.orderDetails.length; i++) {
                 const orderDetail = cancelOrder.orderDetails[i];
-                const updateMeal = cancelOrder.orderDetails[i].meal;
-                const orderDetailAmount = cancelOrder.orderDetails[i].amount;
-                const result = await fn(updateMeal, orderDetailAmount);
+                const updateMeal = orderDetail.meal;
+                const orderDetailAmount = orderDetail.amount;
+                await fn(updateMeal, orderDetailAmount);
             }
-            cancelOrder.status = 'CANCELLED';
-            await queryRunner.manager.save(cancelOrder);
+            cancelOrder.status = OrderStatusEnum.ERROR;
+            await queryRunner.manager.update(Order, { id: cancelOrder.id }, { orderStatus: cancelOrder.status })
             await queryRunner.commitTransaction();
+            return true
         } catch (err) {
             await queryRunner.rollbackTransaction();
             throw new HttpException(err, HttpStatus.INTERNAL_SERVER_ERROR);

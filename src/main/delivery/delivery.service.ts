@@ -94,25 +94,35 @@ export class DeliveryService {
     }
 
     async createOrder(order: Order): Promise<any | undefined> {
-        console.log("Order:", order);
+        const bodyData = {
+            "to_name": order.name,
+            "to_phone": order.phone,
+            "to_address": order.shippingAddress,
+            "to_ward_code": order.shippingWardCode,
+            "to_district_id": order.shippingDistrictCode,
+            "weight": 1000,
+            "content": `Bộ kit thức ăn ${order.id}`,
+            "service_type_id": 2,
+            "payment_type_id": 2,
+            "required_note": "KHONGCHOXEMHANG",
+            "name": order.id,
+            "quantity": 1
+        }
+        let result = undefined;
+        try {
+            const response = await axios.post(`https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/create`, bodyData, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'token': this.configService.get<string>('GHN_TOKEN'),
+                    'shop_id': this.configService.get<string>('GHN_SHOP_ID')
+                },
 
-        const response = await axios.post(`https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/create`, {
-            headers: {
-                'Content-Type': 'application/json',
-                'token': this.configService.get<string>('GHN_TOKEN'),
-                'shop_id': this.configService.get<string>('GHN_SHOP_ID')
-            },
-            Body: {
-                "to_name": order.name,
-                "to_phone": order.phone,
-                "to_address": order.shippingAddress,
-                "to_ward_code": order.shippingWardCode,
-                "to_district_id": order.shippingDistrictCode,
-                "content": order.id,
-                "name": order.id
-            }
-        })
-        console.log("response:", response);
-        return response
+            })
+            result = response.data
+        } catch (error) {
+            console.log("error:", error);
+        }
+        console.log("response:", result);
+        return result
     }
 }
