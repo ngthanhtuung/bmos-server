@@ -11,7 +11,7 @@ import Account from '../account/account.entity';
 import { OrderCreateDto } from './dto/order-create.dto';
 
 @Controller('order')
-// @ApiTags("Order")
+@ApiTags("Order")
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class OrderController {
@@ -26,17 +26,18 @@ export class OrderController {
         return await this.orderService.getAllOrder(user);
     }
 
-    // @Put('/cancel/:orderId')
-    // async cancelOrder(@Param('orderId') orderId: string): Promise<any | undefined> {
-    //     return await this.orderService.cancelOrder(orderId);
-    // }
+    @Post('/')
+    @hasRoles(RoleEnum.CUSTOMER)
+    @ApiBody({
+        type: OrderCreateDto
+    })
+    async createOrder(@Body() data: OrderCreateDto, @GetUser() user: Account): Promise<any | undefined> {
+        return await this.orderService.createOrder(data, user);
+    }
 
-    // @Post('/')
-    // @hasRoles(RoleEnum.CUSTOMER)
-    // @ApiBody({
-    //     type: OrderCreateDto
-    // })
-    // async createOrder(@Body() data: OrderCreateDto, @GetUser() user: Account): Promise<any | undefined> {
-    //     return await this.orderService.createOrder(data, user);
-    // }
+    @Put('/cancel/:orderId')
+    async cancelOrder(@Param('orderId') orderId: string): Promise<any | undefined> {
+        return await this.orderService.cancelOrder(orderId);
+    }
+
 }

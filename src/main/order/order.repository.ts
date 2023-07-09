@@ -7,14 +7,13 @@ import { HttpException, HttpStatus } from "@nestjs/common";
 import Meal from '../meal/meal.entity';
 import Account from '../account/account.entity';
 
-
 @CustomRepository(Order)
 export class OrderRepository extends Repository<Order> {
 
     async createOrder(
         data: OrderCreateDto,
         user: any,
-    fn: (meal: any, amountMeal: number) => Promise<any>
+        fn: (meal: any, amountMeal: number) => Promise<any>
     ): Promise<any | undefined> {
         const queryRunner = this.manager.connection.createQueryRunner();
         await queryRunner.connect();
@@ -57,7 +56,7 @@ export class OrderRepository extends Repository<Order> {
                     })
                 )
             }
-            order.totalPrice = totalPriceOrder;
+            order.totalPrice = totalPriceOrder + data.shippingFee;
             await queryRunner.manager.save(order);
             await queryRunner.commitTransaction();
             return order;

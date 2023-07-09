@@ -25,6 +25,10 @@ export class OrderCreateDto {
     @ApiProperty()
     public shippingDistrictCode: number;
 
+    @IsNumber()
+    @ApiProperty()
+    public shippingFee: number;
+
     @IsNotEmpty()
     @ApiProperty({
         type: [MealCheckDto]

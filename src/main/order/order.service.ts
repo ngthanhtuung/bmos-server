@@ -4,7 +4,6 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { MealCheckDto } from '../meal/dto/meal-check.dto';
 import { MealService } from '../meal/meal.service';
 import ApiResponse from 'src/shared/res/apiReponse';
-import e from 'express';
 import Account from '../account/account.entity';
 import { OrderCreateDto } from './dto/order-create.dto';
 import Meal from '../meal/meal.entity';
@@ -38,21 +37,20 @@ export class OrderService {
             if (unavailableProducts.length !== 0) {
                 throw new HttpException(new ApiResponse('Fail', 'Product is not enough', unavailableProducts), HttpStatus.BAD_REQUEST);
             }
-
             const callback = async (meal: any, amountMeal: number): Promise<any> => {
-                return await this.mealService.getTotalPriceOfMeal(meal, amountMeal)
+                return await this.mealService.getTotalPriceAndUpdateQuantityOfMeal(meal, amountMeal)
             }
             const orderResult = await this.orderRepository.createOrder(order, user, callback);
-            console.log("result in service:", orderResult);
-            if (orderResult) {
-                const response = await this.deliveryService.createOrder(orderResult)
-                console.log("response in service order:",response);
-                if (response.status === 200) {
-                    return new ApiResponse('Success', 'Create order successfully', orderResult);
-                }
-            }
+            // if (orderResult) {
+            //     const response = await this.deliveryService.createOrder(orderResult)
+            //     console.log("response in service order:", response);
+            //     if (response.status === 200) {
+            //         return new ApiResponse('Success', 'Create order successfully', orderResult);
+            //     }
+            // }
+            return orderResult;
         } catch (err) {
-            throw new HttpException(new ApiResponse('Fail', err.message, err.response.data || undefined), err.status || HttpStatus.INTERNAL_SERVER_ERROR)
+            throw new HttpException(new ApiResponse('Fail', err.message), err.status || HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 

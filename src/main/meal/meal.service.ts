@@ -85,6 +85,7 @@ export class MealService {
             throw new HttpException(new ApiResponse('Fail', err.message), HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
+
     async checkMealAvailability(meals: MealCheckDto[]): Promise<any | undefined> {
         try {
             let unavailableProducts: string[] = []; //List of unavailable products
@@ -111,7 +112,8 @@ export class MealService {
         }
     }
 
-    async getTotalPriceOfMeal(meal: any, amountMeal: number): Promise<any | undefined> {
+    async getTotalPriceAndUpdateQuantityOfMeal(meal: any, amountMeal: number): Promise<any | undefined> {
+        
         try {
             let totalPrice = 0
             let productInfo = []
