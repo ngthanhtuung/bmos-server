@@ -6,11 +6,14 @@ export class ProductInMealDto {
 
     @ApiProperty()
     public id: string;
-    @ApiProperty()
+    @ApiProperty({
+        type: Number,
+        example: 1
+    }
+    )
     public amount: number;
 
 }
-
 
 export class MealCreateDto {
 

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Query, UnauthorizedException, Post } from '@nestjs/common';
+import { Body, Controller, Get, Query, UnauthorizedException, Post, Delete, Param } from '@nestjs/common';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { DeliveryService } from './delivery.service';
 import { ShippingFeeDto } from './dto/get-fee.dto';
@@ -35,5 +35,10 @@ export class DeliveryController {
         return await this.deliveryService.getShippingFee(data);
     }
 
+    @Delete('/cancel/:orderCode')
+    async cancelOrder(@Param('orderCode') orderCode: string): Promise<any | undefined> {
+        console.log('Order Code: ', orderCode)
+        return await this.deliveryService.cancelOrder(orderCode);
+    }
 
 }

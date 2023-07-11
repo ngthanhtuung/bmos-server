@@ -20,10 +20,21 @@ export class OrderController {
         private readonly orderService: OrderService,
     ) { }
 
-    @Get('/')
+    @Get('/store')
+    @hasRoles(RoleEnum.ADMIN, RoleEnum.STAFF)
+    async getAllOrders(@GetUser() user: Account): Promise<any | undefined> {
+        return await this.orderService.getAllOrders();
+    }
+
+    @Get('/customer')
     @hasRoles(RoleEnum.CUSTOMER)
-    async getAllOrder(@GetUser() user: Account): Promise<any | undefined> {
-        return await this.orderService.getAllOrder(user);
+    async getAllOrderByCustomer(@GetUser() user: Account): Promise<any | undefined> {
+        return await this.orderService.getAllOrderByCustomer(user);
+    }
+
+    @Get('/:orderId')
+    async getOrderDetail(@Param('orderId') orderId: string): Promise<any | undefined> {
+        return await this.orderService.getOrderDetail(orderId);
     }
 
     @Post('/')
@@ -39,5 +50,4 @@ export class OrderController {
     async cancelOrder(@Param('orderId') orderId: string): Promise<any | undefined> {
         return await this.orderService.cancelOrder(orderId);
     }
-
 }

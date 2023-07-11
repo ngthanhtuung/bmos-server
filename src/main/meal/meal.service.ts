@@ -113,7 +113,7 @@ export class MealService {
     }
 
     async getTotalPriceAndUpdateQuantityOfMeal(meal: any, amountMeal: number): Promise<any | undefined> {
-        
+
         try {
             let totalPrice = 0
             let productInfo = []
@@ -145,19 +145,17 @@ export class MealService {
         try {
             if (meal) {
                 for (const productMeal of meal.productMeals) {
-                    console.log(`\nProduct ${productMeal.product.id} of meal ${meal.id}`)
-                    console.log(`Price of one product ${productMeal.product.id}: ${productMeal.product.price}`)
-                    console.log(`Amount of product ${productMeal.product.id} of meal ${meal.id}: ${productMeal.amount}`)
-                    console.log(`Product ${productMeal.product.id} remaining: ${productMeal.product.remainQuantity}`)
-
-
+                    // console.log(`\nProduct ${productMeal.product.id} of meal ${meal.id}`)
+                    // console.log(`Price of one product ${productMeal.product.id}: ${productMeal.product.price}`)
+                    // console.log(`Amount of product ${productMeal.product.id} of meal ${meal.id}: ${productMeal.amount}`)
+                    // console.log(`Product ${productMeal.product.id} remaining: ${productMeal.product.remainQuantity}`)
                     const newRemainingQuantity = productMeal.product.remainQuantity + (amountMeal * productMeal.amount)
                     const result = await this.productService.updateQuantityProduct(productMeal.product.id, newRemainingQuantity)
                     if (!result) {
                         throw new HttpException(new ApiResponse('Fail', 'Update quantity product failed'), HttpStatus.BAD_REQUEST);
                     }
-                    console.log(`Update remaining quantity of product ${productMeal.product.id}: ${result}`)
-                    console.log(`New remaing quantity of product ${productMeal.product.id}: ${newRemainingQuantity}\n\n`);
+                    // console.log(`Update remaining quantity of product ${productMeal.product.id}: ${result}`)
+                    // console.log(`New remaing quantity of product ${productMeal.product.id}: ${newRemainingQuantity}\n\n`);
                 }
                 return true;
             }
