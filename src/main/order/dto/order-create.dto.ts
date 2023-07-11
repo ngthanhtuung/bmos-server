@@ -17,13 +17,27 @@ export class OrderCreateDto {
     @ApiProperty()
     public shippingAddress: string;
 
-    @IsNotEmpty()
+
+    @IsNumber()
     @ApiProperty()
-    public shippingWardCode: string;
+    public shippingProvinceCode: number;
 
     @IsNumber()
     @ApiProperty()
     public shippingDistrictCode: number;
+
+    @IsNotEmpty()
+    @ApiProperty()
+    public shippingWardCode: string;
+
+
+    @IsNumber()
+    @ApiProperty()
+    public shippingFee: number;
+
+    @IsNotEmpty()
+    @ApiProperty()
+    public paymentType: string;
 
     @IsNotEmpty()
     @ApiProperty({

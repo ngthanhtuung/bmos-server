@@ -116,23 +116,28 @@ export class ProductRepository extends Repository<Product> {
     }
 
     async updateQuantity(productId: string, quantity: number): Promise<any | undefined> {
+
+        const queryRunner = await this.manager.connection.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction('READ COMMITTED');
         try {
-            const product = await this.createQueryBuilder()
-                .update(Product)
-                .set({
-                    remainQuantity: quantity
-                })
-                .where('id = :productId', { productId: productId })
-                .execute();
+            const product = await queryRunner.manager.update(Product,
+                { id: productId },
+                { remainQuantity: quantity }
+            )
             if (product.affected > 0) {
+                await queryRunner.commitTransaction();
                 return true;
             }
         } catch (err) {
+            await queryRunner.rollbackTransaction();
             return false;
+        } finally {
+            queryRunner.release();
         }
     }
 
-    
+
     async getProductDetail(productId: string): Promise<any | undefined> {
         try {
             const query = `SELECT * FROM product WHERE product.id = '${productId}'`

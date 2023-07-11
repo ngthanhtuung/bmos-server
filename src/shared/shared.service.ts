@@ -3,53 +3,53 @@ import { ConfigService } from '@nestjs/config';
 import { HttpException, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import Customer from 'src/main/customer/customer.entity';
-import * as FormData from 'form-data';
-import Mailgun from 'mailgun.js';
+import 'moment-timezone';
+
 
 @Injectable()
 export class SharedService {
-    constructor(
-        private readonly configService: ConfigService,
-        private readonly mailService: MailService
-    ) { }
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly mailService: MailService
+  ) { }
 
-    public async hashPassword(password: string): Promise<string> {
-        const salt: string = await bcrypt.genSalt(10);
-        return await bcrypt.hash(password, salt);
-    }
-    public async comparePassword(
-        password: string,
-        hashPassword: string,
-    ): Promise<boolean> {
-        return await bcrypt.compare(password, hashPassword);
-    }
+  public async hashPassword(password: string): Promise<string> {
+    const salt: string = await bcrypt.genSalt(10);
+    return await bcrypt.hash(password, salt);
+  }
+  public async comparePassword(
+    password: string,
+    hashPassword: string,
+  ): Promise<boolean> {
+    return await bcrypt.compare(password, hashPassword);
+  }
 
-    public stringToDate(
-        _date: string,
-        _format: string,
-        _delimiter: string,
-    ): Date {
-        const formatLowerCase = _format.toLowerCase();
-        const formatItems = formatLowerCase.split(_delimiter);
-        const dateItems = _date.split(_delimiter);
-        const monthIndex = formatItems.indexOf('mm');
-        const dayIndex = formatItems.indexOf('dd');
-        const yearIndex = formatItems.indexOf('yyyy');
-        const month = parseInt(dateItems[monthIndex]) - 1;
-        const formateDate = new Date(
-            +dateItems[yearIndex],
-            month,
-            +dateItems[dayIndex],
-        );
-        return formateDate;
-    }
+  public stringToDate(
+    _date: string,
+    _format: string,
+    _delimiter: string,
+  ): Date {
+    const formatLowerCase = _format.toLowerCase();
+    const formatItems = formatLowerCase.split(_delimiter);
+    const dateItems = _date.split(_delimiter);
+    const monthIndex = formatItems.indexOf('mm');
+    const dayIndex = formatItems.indexOf('dd');
+    const yearIndex = formatItems.indexOf('yyyy');
+    const month = parseInt(dateItems[monthIndex]) - 1;
+    const formateDate = new Date(
+      +dateItems[yearIndex],
+      month,
+      +dateItems[dayIndex],
+    );
+    return formateDate;
+  }
 
-    private prepareHtmlConfirmAccount(customer: Customer): string {
-        const server_host = this.configService.get<string>('SERVER_HOST');
-        const server_port = this.configService.get<string>('PORT');
-        const pathOpenApi = this.configService.get<string>('PATH_OPEN_API');
-        const apiConfirmUser = `${server_host}:${server_port}/${pathOpenApi}/auth/confirm-email/${customer.account.id}`;
-        let html = `<!DOCTYPE html>
+  private prepareHtmlConfirmAccount(customer: Customer): string {
+    const server_host = this.configService.get<string>('SERVER_HOST');
+    const server_port = this.configService.get<string>('PORT');
+    const pathOpenApi = this.configService.get<string>('PATH_OPEN_API');
+    const apiConfirmUser = `${server_host}:${server_port}/${pathOpenApi}/auth/confirm-email/${customer.account.id}`;
+    let html = `<!DOCTYPE html>
         <html style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;">
         <head>
         <meta name="viewport" content="width=device-width" />
@@ -132,19 +132,25 @@ export class SharedService {
             <td style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: top; margin: 0;" valign="top"></td>
           </tr></table></body>
         </html>`
-        return html;
-    }
+    return html;
+  }
 
-    public async sendConfirmationEmail(customer: Customer): Promise<any | undefined> {
-        try {
-            const html = this.prepareHtmlConfirmAccount(customer);
-            const response = await this.mailService.sendEmail(customer.account.email, 'Confirm your email address', html);
-            if (response) {
-                return true;
-            }
-        } catch (err) {
-            return false;
-        }
+  public async sendConfirmationEmail(customer: Customer): Promise<any | undefined> {
+    try {
+      const html = this.prepareHtmlConfirmAccount(customer);
+      const response = await this.mailService.sendEmail(customer.account.email, 'Confirm your email address', html);
+      if (response) {
+        return true;
+      }
+    } catch (err) {
+      return false;
     }
+  }
+
+  public generateRequestId() {
+    const randomNumber = Math.floor(Math.random() * 1000000); // Generate a random number
+    const generatedNumber = randomNumber.toString();
+    console.log('Id request Id: ', generatedNumber);
+  }
 
 }

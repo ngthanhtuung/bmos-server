@@ -6,15 +6,138 @@ import { OrderCreateDto } from "./dto/order-create.dto";
 import { HttpException, HttpStatus } from "@nestjs/common";
 import Meal from '../meal/meal.entity';
 import Account from '../account/account.entity';
-
+import { OrderStatusEnum } from './order-status.enum';
+import ApiResponse from 'src/shared/res/apiReponse';
 
 @CustomRepository(Order)
 export class OrderRepository extends Repository<Order> {
 
+    async getAllOrder(): Promise<any | undefined> {
+        try {
+            const order = await this.createQueryBuilder('order')
+                .leftJoin('order.customer', 'customer')
+                .leftJoinAndSelect('order.orderDetails', 'orderDetails')
+                .leftJoinAndSelect('orderDetails.meal', 'meal')
+                .leftJoinAndSelect('meal.productMeals', 'productMeals')
+                .leftJoinAndSelect('productMeals.product', 'product')
+                .select([
+                    'order.id',
+                    'order.name',
+                    'order.phone',
+                    'order.orderDate',
+                    'order.shippingAddress',
+                    'order.orderCode',
+                    'order.totalPrice',
+                    'order.orderUrl',
+                    'order.orderStatus',
+                    'orderDetails.amount',
+                    'meal.id',
+                    'meal.title',
+                    'meal.description',
+                    'meal.image',
+                    'productMeals.id',
+                    'productMeals.amount',
+                    'product.id',
+                    'product.productName',
+                    'product.description',
+                    'product.image',
+                    'product.expiredDate',
+                    'product.price',
+                    'product.remainQuantity'
+                ])
+                .getMany()
+            return new ApiResponse('Success', 'Get all order successfully', order);
+        } catch (err) {
+            throw new HttpException(new ApiResponse('Fail', err.message), err.status || HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+    async getOrderByCustomer(id: string): Promise<any | undefined> {
+        try {
+            const order = await this.createQueryBuilder('order')
+                .leftJoin('order.customer', 'customer')
+                .leftJoinAndSelect('order.orderDetails', 'orderDetails')
+                .leftJoinAndSelect('orderDetails.meal', 'meal')
+                .leftJoinAndSelect('meal.productMeals', 'productMeals')
+                .leftJoinAndSelect('productMeals.product', 'product')
+                .where('customer.userId = :id', { id: id })
+                .select([
+                    'order.id',
+                    'order.name',
+                    'order.phone',
+                    'order.orderDate',
+                    'order.shippingAddress',
+                    'order.orderCode',
+                    'order.totalPrice',
+                    'order.orderUrl',
+                    'order.orderStatus',
+                    'orderDetails.amount',
+                    'meal.id',
+                    'meal.title',
+                    'meal.description',
+                    'meal.image',
+                    'productMeals.id',
+                    'productMeals.amount',
+                    'product.id',
+                    'product.productName',
+                    'product.description',
+                    'product.image',
+                    'product.expiredDate',
+                    'product.price',
+                    'product.remainQuantity'
+                ])
+                .getMany()
+            return new ApiResponse('Success', 'Get all order successfully', order);
+        } catch (err) {
+            throw new HttpException(new ApiResponse('Fail', err.message), err.status || HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+    async getOrderDetail(orderId: string): Promise<any | undefined> {
+        try {
+            const order = await this.createQueryBuilder('order')
+                .leftJoin('order.customer', 'customer')
+                .leftJoinAndSelect('order.orderDetails', 'orderDetails')
+                .leftJoinAndSelect('orderDetails.meal', 'meal')
+                .leftJoinAndSelect('meal.productMeals', 'productMeals')
+                .leftJoinAndSelect('productMeals.product', 'product')
+                .where('order.id = :orderId', { orderId: orderId })
+                .select([
+                    'order.id',
+                    'order.name',
+                    'order.phone',
+                    'order.orderDate',
+                    'order.shippingAddress',
+                    'order.orderCode',
+                    'order.totalPrice',
+                    'order.orderUrl',
+                    'order.orderStatus',
+                    'orderDetails.amount',
+                    'meal.id',
+                    'meal.title',
+                    'meal.description',
+                    'meal.image',
+                    'productMeals.id',
+                    'productMeals.amount',
+                    'product.id',
+                    'product.productName',
+                    'product.description',
+                    'product.image',
+                    'product.expiredDate',
+                    'product.price',
+                    'product.remainQuantity'
+                ])
+                .getManyAndCount()
+            return new ApiResponse('Success', 'Get all order successfully', order);
+        } catch (err) {
+            throw new HttpException(new ApiResponse('Fail', err.message), err.status || HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
     async createOrder(
         data: OrderCreateDto,
         user: any,
-    fn: (meal: any, amountMeal: number) => Promise<any>
+        fn: (meal: any, amountMeal: number) => Promise<any>
     ): Promise<any | undefined> {
         const queryRunner = this.manager.connection.createQueryRunner();
         await queryRunner.connect();
@@ -48,7 +171,7 @@ export class OrderRepository extends Repository<Order> {
                 }) //Get meal to create order detail
                 let totalPrice = await fn(meal, amountMeal); //After finding Meal, we will call a callback function to calculate the total price of the meal from orderMealService because Order doesn't have any relationship directly with the Product
                 totalPriceOrder += totalPrice;
-                const orderDetail = await queryRunner.manager.save(
+                await queryRunner.manager.save(
                     queryRunner.manager.create('OrderDetail', {
                         amount: amountMeal,
                         totalPrice: totalPrice,
@@ -57,7 +180,7 @@ export class OrderRepository extends Repository<Order> {
                     })
                 )
             }
-            order.totalPrice = totalPriceOrder;
+            order.totalPrice = (totalPriceOrder * 24000) + data.shippingFee;
             await queryRunner.manager.save(order);
             await queryRunner.commitTransaction();
             return order;
@@ -69,7 +192,6 @@ export class OrderRepository extends Repository<Order> {
         }
     }
 
-
     async cancelOrder(
         cancelOrder: any,
         fn: (meal: any, amountMeal: number) => Promise<any>
@@ -80,13 +202,42 @@ export class OrderRepository extends Repository<Order> {
         try {
             for (let i = 0; i < cancelOrder.orderDetails.length; i++) {
                 const orderDetail = cancelOrder.orderDetails[i];
-                const updateMeal = cancelOrder.orderDetails[i].meal;
-                const orderDetailAmount = cancelOrder.orderDetails[i].amount;
-                const result = await fn(updateMeal, orderDetailAmount);
+                const updateMeal = orderDetail.meal;
+                const orderDetailAmount = orderDetail.amount;
+                await fn(updateMeal, orderDetailAmount);
             }
-            cancelOrder.status = 'CANCELLED';
-            await queryRunner.manager.save(cancelOrder);
+            cancelOrder.status = OrderStatusEnum.CANCELED;
+            await queryRunner.manager.update(Order, { id: cancelOrder.id }, { orderStatus: cancelOrder.status })
             await queryRunner.commitTransaction();
+            return true
+        } catch (err) {
+            await queryRunner.rollbackTransaction();
+            throw new HttpException(err, HttpStatus.INTERNAL_SERVER_ERROR);
+        } finally {
+            queryRunner.release();
+        }
+    }
+
+    //use to rollback everything if the system create order failed
+    async rollBackOrder(
+        cancelOrder: any,
+        fn: (meal: any, amountMeal: number) => Promise<any>
+    ): Promise<any | undefined> {
+        const queryRunner = this.manager.connection.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction('READ COMMITTED');
+        try {
+            for (let i = 0; i < cancelOrder.orderDetails.length; i++) {
+                const orderDetail = cancelOrder.orderDetails[i];
+                const updateMeal = orderDetail.meal;
+                const orderDetailAmount = orderDetail.amount;
+                await fn(updateMeal, orderDetailAmount);
+            }
+            // cancelOrder.status = OrderStatusEnum.ERROR;
+            // await queryRunner.manager.update(Order, { id: cancelOrder.id }, { orderStatus: cancelOrder.status })
+            await queryRunner.manager.delete(Order, { id: cancelOrder.id });
+            await queryRunner.commitTransaction();
+            return true
         } catch (err) {
             await queryRunner.rollbackTransaction();
             throw new HttpException(err, HttpStatus.INTERNAL_SERVER_ERROR);

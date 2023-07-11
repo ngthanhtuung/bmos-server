@@ -4,6 +4,8 @@ import { OrderStatusEnum } from "./order-status.enum";
 import Customer from "../customer/customer.entity";
 import OrderDetail from "../order_detail/order_detail.entity";
 import { BaseEntity } from "../base/base.entity";
+import Transaction from "../transaction/transaction.entity";
+import { AutomapperProfile } from "@automapper/nestjs";
 
 
 @Entity()
@@ -26,7 +28,7 @@ export default class Order extends BaseEntity {
     setDefaultOrderDate() {
         this.orderDate = new Date();
     }
-    
+
     @AutoMap()
     @Column('varchar', { name: 'orderCode', nullable: true })
     public orderCode: string;
@@ -62,4 +64,8 @@ export default class Order extends BaseEntity {
     @AutoMap()
     @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.order, { onDelete: 'CASCADE' })
     public orderDetails: OrderDetail[];
+
+    @AutoMap()
+    @OneToMany(() => Transaction, (transaction) => transaction.order, { onDelete: 'CASCADE' })
+    public transactions: Transaction[];
 }
