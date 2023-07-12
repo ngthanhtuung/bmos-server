@@ -11,7 +11,7 @@ export default class Transaction extends BaseEntity {
 
     @AutoMap()
     @Column('datetime', { name: 'paymentTime', nullable: false })
-    paymentTime: string;
+    public paymentTime: string;
 
     @BeforeInsert()
     updatePaymentTime() {
@@ -22,7 +22,11 @@ export default class Transaction extends BaseEntity {
 
     @AutoMap()
     @Column('varchar', { name: 'paymentType', nullable: false })
-    paymentType: string;
+    public paymentType: string;
+
+    @AutoMap()
+    @Column('bigint', { name: 'momoTransactionId', nullable: true })
+    public momoTransactionId: number;
 
     @AutoMap({ typeFn: () => Order })
     @ManyToOne(() => Order, (order) => order.transactions, { onDelete: 'CASCADE' })

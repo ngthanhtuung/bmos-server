@@ -10,6 +10,9 @@ export class TransactionDTO extends BaseDTO {
     @AutoMap()
     paymentType: string;
 
+    @AutoMap()
+    public momoTransactionId: string;
+
     @AutoMap({ typeFn: () => OrderDTO })
     public order: OrderDTO
 }

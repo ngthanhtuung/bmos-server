@@ -1,5 +1,5 @@
 import { OrderService } from './order.service';
-import { Body, Controller, Post, UseGuards, Get, Put, Param } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards, Get, Put, Param, Redirect } from '@nestjs/common';
 import { MealCheckDto } from '../meal/dto/meal-check.dto';
 import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth/jwt-auth.guard';
@@ -39,11 +39,18 @@ export class OrderController {
 
     @Post('/')
     @hasRoles(RoleEnum.CUSTOMER)
+    @Redirect('', 302)
     @ApiBody({
         type: OrderCreateDto
     })
     async createOrder(@Body() data: OrderCreateDto, @GetUser() user: Account): Promise<any | undefined> {
-        return await this.orderService.createOrder(data, user);
+        const result = await this.orderService.createOrder(data, user);
+        console.log("Url: ", result)
+        if (result !== undefined) {
+            return {
+                url: result
+            }
+        }
     }
 
     @Put('/cancel/:orderId')

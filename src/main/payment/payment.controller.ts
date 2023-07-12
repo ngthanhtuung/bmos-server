@@ -1,4 +1,4 @@
-import { Controller, Query, Post, Get, HttpException } from '@nestjs/common';
+import { Controller, Query, Post, Get, HttpException, Res, Redirect } from '@nestjs/common';
 import { PaymentService } from './payment.service';
 import { ApiTags } from '@nestjs/swagger';
 
@@ -16,6 +16,7 @@ export class PaymentController {
         @Query('partnerCode') partnerCode: string,
         @Query('orderId') orderId: string,
         @Query('requestId') requestId: string,
+        @Query('transId') transId: number,
         @Query('amount') amount: string,
         @Query('orderInfo') orderInfo: string,
         @Query('orderType') orderType: string,
@@ -25,9 +26,11 @@ export class PaymentController {
         @Query('responseTime') responseTime: string,
         @Query('extraData') extraData: string,
         @Query('signature') signature: string,
+        @Res() res: Response
     ): Promise<any | undefined> {
-        return await this.paymentService.confirmPayment(orderId, resultCode);
+        return await this.paymentService.confirmPayment(orderId, resultCode, transId, res);
     }
+
 
     // @Post()
     // async createPayment(@Query('amount') amount: string): Promise<string> {
