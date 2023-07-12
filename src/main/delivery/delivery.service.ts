@@ -198,7 +198,7 @@ export class DeliveryService {
             })
             result = response.data
         } catch (error) {
-            console.log(error.response.data)
+            console.log('Error at createOrder in delivery service: ', error)
         }
         return result
     }
