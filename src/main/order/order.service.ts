@@ -85,6 +85,8 @@ export class OrderService {
                     ghnResponse = await this.deliveryService.createOrder(orderResult, true, order.shippingFee);
                 }
                 if (ghnResponse != undefined) {
+
+                    console.log('Log ghnResponse: ', ghnResponse.data)
                     orderResult.orderCode = ghnResponse.data.order_code
                     orderResult.orderUrl = `https://tracking.ghn.dev/?order_code=${ghnResponse.data.order_code}`
                     await this.orderRepository.save(orderResult);
