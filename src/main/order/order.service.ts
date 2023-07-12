@@ -106,8 +106,7 @@ export class OrderService {
                             }
                             break;
                     }
-                    return response.paymentUrl
-                    // return new ApiResponse('Success', 'Create order successfully', response);
+                    return new ApiResponse('Success', 'Create order successfully', response);
                 } else {
                     await this.rollbackOrder(orderResult.id)
                     throw new HttpException(new ApiResponse('Fail', 'Create order fail'), HttpStatus.INTERNAL_SERVER_ERROR)
