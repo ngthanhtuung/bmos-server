@@ -1,5 +1,5 @@
 
-import { HttpException, HttpStatus, Inject, Injectable, Query, forwardRef } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable, Query, Res, forwardRef } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
 import * as crypto from 'crypto';
@@ -10,6 +10,7 @@ import { TransactionService } from '../transaction/transaction.service';
 import { OrderStatusEnum } from '../order/order-status.enum';
 import { SharedService } from 'src/shared/shared.service';
 import { v4 as uuidv4 } from 'uuid';
+import { HttpService } from '@nestjs/axios';
 
 @Injectable()
 export class PaymentService {
@@ -20,7 +21,8 @@ export class PaymentService {
         @Inject(forwardRef(() => OrderService))
         private readonly orderService: OrderService,
         private readonly transactionService: TransactionService,
-        private readonly sharedService: SharedService
+        private readonly sharedService: SharedService,
+        private readonly httpService: HttpService
 
     ) { }
     private readonly SERVER_HOST = this.configService.get<string>('SERVER_HOST');
@@ -78,13 +80,15 @@ export class PaymentService {
         }
     }
 
-    async confirmPayment(orderId: string, resultCode: number): Promise<any | undefined> {
+    async confirmPayment(orderId: string, resultCode: number, momoTransId: number, res: Response): Promise<any | undefined> {
         try {
             if (resultCode == 0) {
+                console.log('Transaction Id: ', momoTransId)
                 const order = await this.orderService.getOrder(orderId);
-                const transaction = await this.transactionService.createTransaction(order, 'MOMO');
+                const transaction = await this.transactionService.createTransaction(order, 'MOMO', momoTransId);
                 if (transaction) {
                     const updateOrder = await this.orderService.updateOrderStatus(order.id, OrderStatusEnum.CONFIRMED)
+                    console.log(res)
                     return new ApiResponse('Success', 'Payment successfully!')
                 }
             }
@@ -94,4 +98,21 @@ export class PaymentService {
             throw new HttpException(new ApiResponse('Fail', err.message), err.status || HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
+
+    // async refundPayment(order: Order): Promise<any | undefined> {
+
+    //     const requestId = uuidv4();
+    //     const orderId = order.id;
+    //     const amount = order.totalPrice;
+
+    //     try {
+    //         const transaction = await this.transactionService.getTransactionByOrder(order);
+    //         if (transaction !== undefined && transaction.paymentType == 'MOMO') {
+
+    //         }
+    //     } catch (err) {
+    //         console.error('MoMo refundPayment error:', err.response?.data || err.message);
+    //         throw new HttpException(new ApiResponse('Fail', err.message), err.status || HttpStatus.INTERNAL_SERVER_ERROR)
+    //     }
+    // }
 }

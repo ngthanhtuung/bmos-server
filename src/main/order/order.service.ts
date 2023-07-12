@@ -106,7 +106,8 @@ export class OrderService {
                             }
                             break;
                     }
-                    return new ApiResponse('Success', 'Create order successfully', response);
+                    return response.paymentUrl
+                    // return new ApiResponse('Success', 'Create order successfully', response);
                 } else {
                     await this.rollbackOrder(orderResult.id)
                     throw new HttpException(new ApiResponse('Fail', 'Create order fail'), HttpStatus.INTERNAL_SERVER_ERROR)
@@ -130,6 +131,7 @@ export class OrderService {
                 }
                 const result = await this.orderRepository.cancelOrder(cancelOrder, callback);
                 if (result) {
+                    // const refundPayment = await this.paymentService.refundPayment(cancelOrder);
                     const response = await this.deliveryService.cancelOrder(cancelOrder.orderCode);
                     if (response == 200) {
                         return new ApiResponse('Success', `Cancel order #${cancelOrder.id} successfully`);
