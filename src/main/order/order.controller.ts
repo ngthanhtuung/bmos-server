@@ -39,18 +39,11 @@ export class OrderController {
 
     @Post('/')
     @hasRoles(RoleEnum.CUSTOMER)
-    @Redirect('', 302)
     @ApiBody({
         type: OrderCreateDto
     })
     async createOrder(@Body() data: OrderCreateDto, @GetUser() user: Account): Promise<any | undefined> {
-        const result = await this.orderService.createOrder(data, user);
-        console.log("Url: ", result)
-        if (result !== undefined) {
-            return {
-                url: result
-            }
-        }
+        return await this.orderService.createOrder(data, user);
     }
 
     @Put('/cancel/:orderId')
