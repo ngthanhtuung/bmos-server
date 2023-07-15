@@ -12,9 +12,10 @@ import ApiResponse from 'src/shared/res/apiReponse';
 @CustomRepository(Order)
 export class OrderRepository extends Repository<Order> {
 
-    async getAllOrder(): Promise<any | undefined> {
+    async getAllOrder(status: OrderStatusEnum): Promise<any | undefined> {
         try {
-            const order = await this.createQueryBuilder('order')
+            const query = await this.createQueryBuilder('order')
+                .leftJoinAndSelect('order.transactions', 'transaction')
                 .leftJoin('order.customer', 'customer')
                 .leftJoinAndSelect('order.orderDetails', 'orderDetails')
                 .leftJoinAndSelect('orderDetails.meal', 'meal')
@@ -30,6 +31,7 @@ export class OrderRepository extends Repository<Order> {
                     'order.totalPrice',
                     'order.orderUrl',
                     'order.orderStatus',
+                    'transaction.paymentType',
                     'orderDetails.amount',
                     'meal.id',
                     'meal.title',
@@ -45,19 +47,20 @@ export class OrderRepository extends Repository<Order> {
                     'product.price',
                     'product.remainQuantity'
                 ])
-                .getMany()
+            if (status !== undefined) {
+                query.where('order.orderStatus = :status', { status: status })
+            }
+            const order = await query.getMany();
             return new ApiResponse('Success', 'Get all order successfully', order);
         } catch (err) {
             throw new HttpException(new ApiResponse('Fail', err.message), err.status || HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
-    async getOrderByCustomer(id: string): Promise<any | undefined> {
+    async getOrderByCustomer(id: string, status: OrderStatusEnum): Promise<any | undefined> {
         try {
-
-            console.log('userId in get all order by customer: ', id)
-
-            const order = await this.createQueryBuilder('order')
+            const query = await this.createQueryBuilder('order')
+                .leftJoinAndSelect('order.transactions', 'transaction')
                 .leftJoin('order.customer', 'customer')
                 .leftJoinAndSelect('order.orderDetails', 'orderDetails')
                 .leftJoinAndSelect('orderDetails.meal', 'meal')
@@ -74,6 +77,7 @@ export class OrderRepository extends Repository<Order> {
                     'order.totalPrice',
                     'order.orderUrl',
                     'order.orderStatus',
+                    'transaction.paymentType',
                     'orderDetails.amount',
                     'meal.id',
                     'meal.title',
@@ -89,7 +93,10 @@ export class OrderRepository extends Repository<Order> {
                     'product.price',
                     'product.remainQuantity'
                 ])
-                .getMany()
+            if (status !== undefined) {
+                query.where('order.orderStatus = :status', { status: status })
+            }
+            const order = await query.getMany();
             return new ApiResponse('Success', 'Get all order successfully', order);
         } catch (err) {
             throw new HttpException(new ApiResponse('Fail', err.message), err.status || HttpStatus.INTERNAL_SERVER_ERROR)
@@ -99,6 +106,7 @@ export class OrderRepository extends Repository<Order> {
     async getOrderDetail(orderId: string): Promise<any | undefined> {
         try {
             const order = await this.createQueryBuilder('order')
+                .leftJoinAndSelect('order.transactions', 'transaction')
                 .leftJoin('order.customer', 'customer')
                 .leftJoinAndSelect('order.orderDetails', 'orderDetails')
                 .leftJoinAndSelect('orderDetails.meal', 'meal')
@@ -115,6 +123,7 @@ export class OrderRepository extends Repository<Order> {
                     'order.totalPrice',
                     'order.orderUrl',
                     'order.orderStatus',
+                    'transaction.paymentType',
                     'orderDetails.amount',
                     'meal.id',
                     'meal.title',
@@ -130,8 +139,40 @@ export class OrderRepository extends Repository<Order> {
                     'product.price',
                     'product.remainQuantity'
                 ])
-                .getManyAndCount()
+                .getOne()
             return new ApiResponse('Success', 'Get all order successfully', order);
+        } catch (err) {
+            throw new HttpException(new ApiResponse('Fail', err.message), err.status || HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+    async updateDelivery(orderId: string): Promise<any | undefined> {
+        try {
+            const order = await this.findOne({
+                where: { id: orderId }
+            })
+            if (!order) {
+                throw new HttpException(new ApiResponse('Fail', 'Order not found'), HttpStatus.NOT_FOUND)
+            }
+            order.orderStatus = OrderStatusEnum.DELIVERING;
+            await this.save(order);
+            return new ApiResponse('Success', `Order #${order.id} is now delivering`, order);
+        } catch (err) {
+            throw new HttpException(new ApiResponse('Fail', err.message), err.status || HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+    async updateComplete(orderId: string): Promise<any | undefined> {
+        try {
+            const order = await this.findOne({
+                where: { id: orderId }
+            })
+            if (!order) {
+                throw new HttpException(new ApiResponse('Fail', 'Order not found'), HttpStatus.NOT_FOUND)
+            }
+            order.orderStatus = OrderStatusEnum.COMPLETED;
+            await this.save(order);
+            return new ApiResponse('Success', `Order #${order.id} is now delivering`, order);
         } catch (err) {
             throw new HttpException(new ApiResponse('Fail', err.message), err.status || HttpStatus.INTERNAL_SERVER_ERROR)
         }
