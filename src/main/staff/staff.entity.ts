@@ -1,7 +1,9 @@
 import { AutoMap } from "@automapper/classes";
 import { BaseEntity } from "../base/base.entity";
-import { Column, Entity, JoinColumn, OneToOne } from "typeorm";
+import { BeforeInsert, Column, Entity, JoinColumn, ManyToOne, OneToOne } from "typeorm";
 import Account from "../account/account.entity";
+import * as moment from 'moment';
+import 'moment-timezone';
 
 @Entity()
 export default class Staff extends BaseEntity {
@@ -16,8 +18,15 @@ export default class Staff extends BaseEntity {
     public identityNumber: string;
 
     @AutoMap()
-    @Column('date', { name: 'registerDate', nullable: true })
-    public registerDate: Date;
+    @Column('datetime', { name: 'registerDate', nullable: true })
+    public registerDate: string;
+
+    @BeforeInsert()
+    updateRegisterDate() {
+        moment.tz.setDefault('Asia/Ho_Chi_Minh');
+        const formattedDate = moment().format("YYYY-MM-DD HH:mm:ss");
+        this.registerDate = formattedDate;
+    }
 
     @AutoMap()
     @Column('date', { name: 'quitDate', nullable: true })

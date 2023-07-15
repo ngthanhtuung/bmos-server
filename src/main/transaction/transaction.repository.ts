@@ -24,6 +24,8 @@ export class TransactionRepository extends Repository<Transaction>{
 
     async createTransaction(order: Order, paymentType: string, momoTransId?: number): Promise<any | undefined> {
         try {
+
+            console.log('Transaction Id in transaction repo: ', momoTransId)
             const transaction = new Transaction();
             transaction.paymentType = paymentType;
             transaction.order = order;

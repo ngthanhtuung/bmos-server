@@ -80,7 +80,7 @@ export class PaymentService {
         }
     }
 
-    async confirmPayment(orderId: string, resultCode: number, momoTransId: number, res: Response): Promise<any | undefined> {
+    async confirmPayment(orderId: string, resultCode: number, momoTransId: number): Promise<any | undefined> {
         try {
             if (resultCode == 0) {
                 console.log('Transaction Id: ', momoTransId)
@@ -88,7 +88,6 @@ export class PaymentService {
                 const transaction = await this.transactionService.createTransaction(order, 'MOMO', momoTransId);
                 if (transaction) {
                     const updateOrder = await this.orderService.updateOrderStatus(order.id, OrderStatusEnum.CONFIRMED)
-                    console.log(res)
                     return new ApiResponse('Success', 'Payment successfully!')
                 }
             }

@@ -4,7 +4,6 @@ import ProductMeal from "../product_meal/product_meal.entity";
 import { Column, Entity, ManyToOne, OneToMany } from "typeorm";
 import Bird from "../bird/bird.entity";
 import OrderDetail from "../order_detail/order_detail.entity";
-
 @Entity()
 export default class Meal extends BaseEntity {
 

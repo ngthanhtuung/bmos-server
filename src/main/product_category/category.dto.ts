@@ -6,6 +6,9 @@ export default class CategoryDto {
     public id: number;
 
     @AutoMap()
+    public status: boolean;
+
+    @AutoMap()
     public name: string;
 
 }
