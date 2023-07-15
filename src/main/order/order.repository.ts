@@ -54,6 +54,9 @@ export class OrderRepository extends Repository<Order> {
 
     async getOrderByCustomer(id: string): Promise<any | undefined> {
         try {
+
+            console.log('userId in get all order by customer: ', id)
+
             const order = await this.createQueryBuilder('order')
                 .leftJoin('order.customer', 'customer')
                 .leftJoinAndSelect('order.orderDetails', 'orderDetails')
