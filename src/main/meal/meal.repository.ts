@@ -5,9 +5,15 @@ import { MealUpdateDto } from "./dto/meal-update.dto";
 
 @CustomRepository(Meal)
 export class MealRepository extends Repository<Meal> {
-
+    groupByKey(array: any, key: string) {
+        return array
+            .reduce((hash: any, obj: any) => {
+                if (obj[key] === undefined) return hash;
+                return Object.assign(hash, { [obj[key]]: (hash[obj[key]] || []).concat(obj) })
+            }, {})
+    }
     async getAllMeals(): Promise<any | undefined> {
-        const meal = await this.createQueryBuilder('meal')
+        let meal = await this.createQueryBuilder('meal')
             .leftJoinAndSelect('meal.productMeals', 'productMeal')
             .leftJoinAndSelect('productMeal.product', 'product')
             .select([
@@ -16,6 +22,7 @@ export class MealRepository extends Repository<Meal> {
                 'meal.description',
                 'meal.image',
                 'productMeal.amount',
+                'productMeal.section',
                 'product.id',
                 'product.productName',
                 'product.expiredDate',
@@ -27,6 +34,12 @@ export class MealRepository extends Repository<Meal> {
                 createdBy: ''
             })
             .getMany();
+        const productList = meal.map(p => p.productMeals).flat();
+        const productGroupBySection = this.groupByKey(productList, 'section')
+        console.log("productGroupBySection:", productGroupBySection);
+        meal.map(i => {
+            i.productMeals = productGroupBySection
+        })
         return meal;
     }
     async getAllMealsByName(name: string): Promise<any | undefined> {
@@ -57,7 +70,7 @@ export class MealRepository extends Repository<Meal> {
         return meal;
     }
     async getMealByBird(birdId: string): Promise<any | undefined> {
-        const meal = await this.createQueryBuilder('meal')
+        let meal = await this.createQueryBuilder('meal')
             .leftJoinAndSelect('meal.bird', 'bird')
             .leftJoinAndSelect('meal.productMeals', 'productMeal')
             .leftJoinAndSelect('productMeal.product', 'product')
@@ -67,6 +80,7 @@ export class MealRepository extends Repository<Meal> {
                 'meal.description',
                 'meal.image',
                 'productMeal.amount',
+                'productMeal.section',
                 'product.id',
                 'product.productName',
                 'product.expiredDate',
@@ -76,6 +90,12 @@ export class MealRepository extends Repository<Meal> {
             ])
             .where('bird.id = :birdId', { birdId })
             .getMany();
+        const productList = meal.map(p => p.productMeals).flat();
+        const productGroupBySection = this.groupByKey(productList, 'section')
+        console.log("productGroupBySection:", productGroupBySection);
+        meal.map(i => {
+            i.productMeals = productGroupBySection
+        })
         return meal;
     }
 
@@ -91,6 +111,7 @@ export class MealRepository extends Repository<Meal> {
                 'meal.status',
                 'meal.image',
                 'productMeal.amount',
+                'productMeal.section',
                 'product.id',
                 'product.productName',
                 'product.expiredDate',
@@ -100,6 +121,10 @@ export class MealRepository extends Repository<Meal> {
             ])
             .where('meal.id = :mealId', { mealId })
             .getOne();
+        const productList = meal.productMeals;
+        const productGroupBySection = this.groupByKey(productList, 'section')
+        console.log("productGroupBySection:", productGroupBySection);
+        meal.productMeals = productGroupBySection
         return meal;
     }
 

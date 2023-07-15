@@ -26,7 +26,6 @@ export class PaymentController {
         @Query('responseTime') responseTime: string,
         @Query('extraData') extraData: string,
         @Query('signature') signature: string,
-        @Res() res: Response
     ): Promise<any | undefined> {
         return await this.paymentService.confirmPayment(orderId, resultCode, transId);
     }

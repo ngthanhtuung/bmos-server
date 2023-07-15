@@ -8,6 +8,8 @@ export class ProductInMealDto {
     public id: string;
     @ApiProperty()
     public amount: number;
+    @ApiProperty()
+    public section: string;
 
 }
 export class MealUpdateDto {

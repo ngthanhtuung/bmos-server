@@ -76,9 +76,7 @@ export class MealService {
             meal.description = data.description;
             meal.image = data.image;
             meal.bird = await this.birdService.getBirdById(data.birdId)
-            if (user.role.name === RoleEnum.CUSTOMER) {
-                meal.createdBy = user.id;
-            }
+            meal.createdBy = user.role.name === RoleEnum.CUSTOMER ? user.id : '';
             const newMeal = await this.mealRepository.save(meal);
             if (newMeal) {
                 const result = await this.productMealService.insertProductMeal(newMeal.id, data.products);
@@ -178,9 +176,11 @@ export class MealService {
             console.log("checkExistMeal:", checkExistMeal);
             // Check meals exist
             if (checkExistMeal) {
-                // Check create by user
-                if (user.id !== checkExistMeal.createdBy) {
-                    throw new HttpException(new ApiResponse('Fail', 'Meals do not belong to the user!!!'), HttpStatus.BAD_REQUEST)
+                if (user.role.name === RoleEnum.CUSTOMER) {
+                    // Check create by user
+                    if (user.id !== checkExistMeal.createdBy) {
+                        throw new HttpException(new ApiResponse('Fail', 'Meals do not belong to the user!!!'), HttpStatus.BAD_REQUEST)
+                    }
                 }
                 // check bird
                 const bird = await this.birdService.getBirdById(data.birdId)

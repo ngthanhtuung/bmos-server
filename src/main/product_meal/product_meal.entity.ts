@@ -6,11 +6,13 @@ import { Column, ManyToOne, Entity } from 'typeorm';
 
 @Entity()
 export default class ProductMeal extends BaseEntity {
-    
+
     @AutoMap()
     @Column('int', { name: 'amount', nullable: false, default: 1 })
     public amount: number;
-
+    @AutoMap()
+    @Column('nvarchar', { name: 'section', nullable: false })
+    public section: string;
     @AutoMap()
     @ManyToOne(() => Product, (product) => product.productMeals, { onDelete: 'CASCADE' })
     public product: Product;

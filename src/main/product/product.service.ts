@@ -37,9 +37,9 @@ export class ProductService {
             throw new HttpException(new ApiResponse('Fail', err.message), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    async getAllProductByName(name: string): Promise<any | undefined> {
+    async getAllProductByName(name: string, categoryId?: number): Promise<any | undefined> {
         try {
-            return await this.productRepository.getAllProductByName(name);
+            return await this.productRepository.getAllProductByName(name,categoryId);
         } catch (err) {
             throw new HttpException(new ApiResponse('Fail', err.message), HttpStatus.INTERNAL_SERVER_ERROR);
         }

@@ -9,7 +9,7 @@ export class ProductMealService {
         private readonly productMealRepository: ProductMealRepository,
     ) { }
 
-    async insertProductMeal(mealId: string, data: any[]): Promise<any | undefined> {
+    async insertProductMeal(mealId: string, data: any[]): Promise<any | undefined> {  
         return await this.productMealRepository.insertProductMeal(mealId, data);
     }
     async deleteProductMeal(mealId: string): Promise<any | undefined> {

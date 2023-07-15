@@ -33,15 +33,6 @@ export class MealController {
     async getAllMealByCustomer(@GetUser() user: Account) {
         return await this.mealService.getAllMealByCustomer(user.id);
     }
-    @Get('/:mealId')
-    async getMealDetail(@Param('mealId') mealId: string) {
-        return await this.mealService.getMealDetail(mealId);
-    }
-    @Get('/:birdId')
-    async getMealByBird(@Param('birdId') birdId: string) {
-        return await this.mealService.getMealByBird(birdId);
-    }
-
     @Post('/create')
     async createMealByCustomer(@GetUser() user: Account, @Body() data: MealCreateDto) {
         return await this.mealService.createMeal(data, user);
@@ -50,6 +41,14 @@ export class MealController {
     @Put('/update')
     async updateMealByCustomer(@GetUser() user: Account, @Body() data: MealUpdateDto) {
         return await this.mealService.updateMeal(data, user);
+    }
+    @Get('detail/:mealId')
+    async getMealDetail(@Param('mealId') mealId: string) {
+        return await this.mealService.getMealDetail(mealId);
+    }
+    @Get('bird/:birdId')
+    async getMealByBird(@Param('birdId') birdId: string) {
+        return await this.mealService.getMealByBird(birdId);
     }
 
 }
