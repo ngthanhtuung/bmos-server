@@ -20,6 +20,7 @@ export class OrderController {
         private readonly orderService: OrderService,
     ) { }
 
+
     @Get('/store')
     @hasRoles(RoleEnum.ADMIN, RoleEnum.STAFF)
     async getAllOrders(@GetUser() user: Account): Promise<any | undefined> {
@@ -50,4 +51,6 @@ export class OrderController {
     async cancelOrder(@Param('orderId') orderId: string): Promise<any | undefined> {
         return await this.orderService.cancelOrder(orderId);
     }
+
+
 }
