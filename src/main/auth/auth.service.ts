@@ -46,12 +46,11 @@ export class AuthService {
         throw new HttpException(new ApiResponse('Failed', "Email or Password is invalid"), HttpStatus.BAD_REQUEST);
     }
 
-    login(account: Account) {
+    async login(account: Account) {
         const payload: Payload = {
             id: account.id,
             email: account.email,
             roles: [account.role.name]
-
         }
         const accessToken = this.jwtService.sign(payload, {
             secret: jwtConstants.accessTokenSecret,

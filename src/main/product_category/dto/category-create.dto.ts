@@ -9,5 +9,5 @@ export class ProductCategoryCreateDto {
         type: String,
         maxLength: 255,
     })
-    public category_name: string;
+    public categoryName: string;
 }

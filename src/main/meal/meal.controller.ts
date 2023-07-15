@@ -8,17 +8,18 @@ import { JwtAuthGuard } from '../auth/jwt-auth/jwt-auth.guard';
 import { hasRoles } from '../auth/role/roles.decorator';
 import { MealUpdateDto } from './dto/meal-update.dto';
 import { GetUser } from 'src/decorators/getUser.decorator';
+import { RoleEnum } from '../role/role.enum';
 
 @Controller('meal')
 @ApiTags('Meal')
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class MealController {
 
     constructor(
         private readonly mealService: MealService,
     ) { }
-        
+
     @Get('/title')
     async getAllMealByTitle(@Query('title') title: string) {
         return await this.mealService.getAllMealByTitle(title);
@@ -27,6 +28,7 @@ export class MealController {
     async getAllMeal() {
         return await this.mealService.getAllMeal();
     }
+
     @Get('/customer')
     async getAllMealByCustomer(@GetUser() user: Account) {
         return await this.mealService.getAllMealByCustomer(user.id);
@@ -44,6 +46,7 @@ export class MealController {
     async createMealByCustomer(@GetUser() user: Account, @Body() data: MealCreateDto) {
         return await this.mealService.createMeal(data, user);
     }
+
     @Put('/update')
     async updateMealByCustomer(@GetUser() user: Account, @Body() data: MealUpdateDto) {
         return await this.mealService.updateMeal(data, user);

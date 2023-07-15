@@ -26,13 +26,12 @@ export class TransactionService {
     async createTransaction(order: Order, paymentType: string, momoTransId?: number): Promise<any | undefined> {
         try {
             let transaction;
-
-            if (paymentType === 'MOMO' && !momoTransId) {
+            console.log('Transaction Id in transaction service: ', momoTransId)
+            if (paymentType === 'MOMO') {
                 transaction = await this.transactionRepository.createTransaction(order, paymentType, momoTransId);
             } else {
                 transaction = await this.transactionRepository.createTransaction(order, paymentType);
             }
-
             if (transaction) {
                 return true;
             }

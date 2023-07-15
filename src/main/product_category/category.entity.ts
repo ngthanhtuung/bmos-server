@@ -14,6 +14,10 @@ export default class Category {
     public name: string;
 
     @AutoMap()
+    @Column('boolean', { name: 'status', nullable: false, default: true })
+    public status: boolean;
+
+    @AutoMap()
     @OneToMany(() => Product, (product) => product.category, { onDelete: 'CASCADE' })
     public products: Product[];
 }
