@@ -147,7 +147,6 @@ export class DeliveryService {
     }
 
     async createOrder(order: Order, cod: boolean, shippingFee?: number): Promise<any | undefined> {
-
         const bodyMomoData = {
             "to_name": order.name,
             "to_phone": order.phone,

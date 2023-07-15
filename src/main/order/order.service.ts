@@ -25,6 +25,7 @@ export class OrderService {
         private readonly paymentService: PaymentService,
     ) { }
 
+
     async getAllOrders(): Promise<any | undefined> {
         try {
             const orders = await this.orderRepository.getAllOrder();
@@ -101,8 +102,11 @@ export class OrderService {
                         case 'COD':
                             const transactionResult = await this.transactionService.createTransaction(orderResult, 'COD');
                             if (transactionResult !== undefined) {
-                                orderResult.status = OrderStatusEnum.CONFIRMED
-                                await this.orderRepository.save(orderResult)
+                                orderResult.orderStatus = OrderStatusEnum.CONFIRMED
+                                const result = await this.orderRepository.save(orderResult)
+                                response = {
+                                    ...result
+                                }
                             }
                             break;
                     }
@@ -130,8 +134,8 @@ export class OrderService {
                 }
                 const result = await this.orderRepository.cancelOrder(cancelOrder, callback);
                 if (result) {
-                    // const refundPayment = await this.paymentService.refundPayment(cancelOrder);
                     const response = await this.deliveryService.cancelOrder(cancelOrder.orderCode);
+                    // const refundPayment = await this.paymentService.refundPayment(cancelOrder);
                     if (response == 200) {
                         return new ApiResponse('Success', `Cancel order #${cancelOrder.id} successfully`);
                     }
