@@ -32,7 +32,6 @@ export default class ProductMealRepository extends Repository<ProductMeal> {
                 .delete()
                 .where('mealId = :id', { id: mealId })
                 .execute();
-            console.log("deleted:", deleted);
             if (deleted) {
                 return true;
             }

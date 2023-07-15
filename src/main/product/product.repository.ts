@@ -58,7 +58,6 @@ export class ProductRepository extends Repository<Product> {
     async getAllProduct(): Promise<any | undefined> {
         try {
             const products = await this.find()
-            console.log("products:", products);
             if (products) {
                 return new ApiResponse('Success', 'Get product by category successfully', products);
             }
@@ -69,11 +68,9 @@ export class ProductRepository extends Repository<Product> {
     async getAllProductByName(name: string, categoryId?: number): Promise<any | undefined> {
         try {
             let query = `SELECT * FROM product WHERE productName like '%${name}%'`
-            console.log("categoryId:", typeof categoryId);
             if (isNumber(Number(categoryId))) {
                 query += ` AND categoryId = '${Number(categoryId)}'; `
             }
-            console.log("query:", query);
             const result = await this.query(query);
             if (result) {
                 return new ApiResponse('Success', 'Get product by name successfully', result);
