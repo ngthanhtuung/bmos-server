@@ -26,9 +26,9 @@ export class OrderService {
     ) { }
 
 
-    async getAllOrders(): Promise<any | undefined> {
+    async getAllOrders(status: OrderStatusEnum): Promise<any | undefined> {
         try {
-            const orders = await this.orderRepository.getAllOrder();
+            const orders = await this.orderRepository.getAllOrder(status);
             if (orders) {
                 return orders;
             }
@@ -38,9 +38,9 @@ export class OrderService {
         }
     }
 
-    async getAllOrderByCustomer(user: Account): Promise<any | undefined> {
+    async getAllOrderByCustomer(user: Account, status: OrderStatusEnum): Promise<any | undefined> {
         try {
-            const orders = await this.orderRepository.getOrderByCustomer(user.id)
+            const orders = await this.orderRepository.getOrderByCustomer(user.id, status)
             if (orders) {
                 return orders;
             }
@@ -122,27 +122,30 @@ export class OrderService {
         }
     }
 
-    async cancelOrder(orderId: string): Promise<any | undefined> {
+    async cancelOrder(orderId: string, user: Account): Promise<any | undefined> {
         try {
             const cancelOrder = await this.orderRepository.findOne({
                 where: { id: orderId },
                 relations: ['orderDetails', 'orderDetails.meal', 'orderDetails.meal.productMeals', 'orderDetails.meal.productMeals.product']
             })
             if (cancelOrder) {
-                const callback = async (meal: any, amountMeal: number): Promise<any> => {
-                    return await this.mealService.cancelOrderMeal(meal, amountMeal)
-                }
-                const result = await this.orderRepository.cancelOrder(cancelOrder, callback);
-                if (result) {
-                    const response = await this.deliveryService.cancelOrder(cancelOrder.orderCode);
-                    // const refundPayment = await this.paymentService.refundPayment(cancelOrder);
-                    if (response == 200) {
-                        return new ApiResponse('Success', `Cancel order #${cancelOrder.id} successfully`);
+                if (cancelOrder.orderStatus === OrderStatusEnum.CREATED || cancelOrder.orderStatus === OrderStatusEnum.CONFIRMED) {
+                    const callback = async (meal: any, amountMeal: number): Promise<any> => {
+                        return await this.mealService.cancelOrderMeal(meal, amountMeal)
+                    }
+                    const result = await this.orderRepository.cancelOrder(cancelOrder, callback);
+                    if (result) {
+                        const response = await this.deliveryService.cancelOrder(cancelOrder.orderCode);
+                        // const refundPayment = await this.paymentService.refundPayment(cancelOrder);
+                        if (response == 200) {
+                            return new ApiResponse('Success', `Cancel order #${cancelOrder.id} successfully`);
+                        }
+                    } else {
+                        throw new HttpException(new ApiResponse('Fail', `Cancel order #${cancelOrder.id} failed`), HttpStatus.INTERNAL_SERVER_ERROR);
                     }
                 } else {
-                    throw new HttpException(new ApiResponse('Fail', `Cancel order #${cancelOrder.id} failed`), HttpStatus.INTERNAL_SERVER_ERROR);
+                    throw new HttpException(new ApiResponse('Fail', `Order #${orderId} is delivering, can't cancel`), HttpStatus.BAD_REQUEST);
                 }
-
             }
             throw new HttpException(new ApiResponse('Fail', `Order #${orderId} not found`), HttpStatus.NOT_FOUND);
         } catch (err) {
@@ -192,5 +195,13 @@ export class OrderService {
             console.log('Error at updateOrderStatus: ', err.message);
             return false;
         }
+    }
+
+    async updateDelivery(orderId: string): Promise<any | undefined> {
+        return await this.orderRepository.updateDelivery(orderId);
+    }
+
+    async updateComplete(orderId: string): Promise<any | undefined> {
+        return await this.orderRepository.updateComplete(orderId);
     }
 }
