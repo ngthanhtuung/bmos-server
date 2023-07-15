@@ -12,6 +12,12 @@ export class ProductInMealDto {
     }
     )
     public amount: number;
+    @ApiProperty({
+        type: String,
+        example: "Morning"
+    }
+    )
+    public section: string;
 
 }
 

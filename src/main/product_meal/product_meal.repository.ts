@@ -8,11 +8,11 @@ export default class ProductMealRepository extends Repository<ProductMeal> {
 
     async insertProductMeal(mealId: string, data: any[]): Promise<any | undefined> {
         try {
-            let query = 'INSERT INTO product_meal (id, mealId, productId, amount) VALUES ';
+            let query = 'INSERT INTO product_meal (id, mealId, productId, amount, section) VALUES ';
             for (let i = 0; i < data.length; i++) {
                 const product = data[i];
                 const id = uuidv4();
-                query += `('${id}', '${mealId}', '${product.id}', ${product.amount})`;
+                query += `('${id}', '${mealId}', '${product.id}', ${product.amount}, '${product.section}')`;
                 if (i !== data.length - 1) {
                     query += ', ';
                 }

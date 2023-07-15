@@ -5,6 +5,7 @@ import { ProductCreateDto } from "./dto/product-create.dto";
 import { HttpException, HttpStatus } from "@nestjs/common";
 import ApiResponse from "src/shared/res/apiReponse";
 import { ProductUpdateDto } from "./dto/product-update.dto";
+import { isNumber } from "class-validator";
 
 @CustomRepository(Product)
 export class ProductRepository extends Repository<Product> {
@@ -65,9 +66,14 @@ export class ProductRepository extends Repository<Product> {
             throw new HttpException(err, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    async getAllProductByName(name: string): Promise<any | undefined> {
+    async getAllProductByName(name: string, categoryId?: number): Promise<any | undefined> {
         try {
-            const query = `SELECT * FROM product WHERE productName like '%${name}%';`
+            let query = `SELECT * FROM product WHERE productName like '%${name}%'`
+            console.log("categoryId:", typeof categoryId);
+            if (isNumber(Number(categoryId))) {
+                query += ` AND categoryId = '${Number(categoryId)}'; `
+            }
+            console.log("query:", query);
             const result = await this.query(query);
             if (result) {
                 return new ApiResponse('Success', 'Get product by name successfully', result);

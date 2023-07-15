@@ -24,9 +24,13 @@ export class ProductController {
         return await this.productService.checkAvailableProduct(productId, quantity);
     }
     @hasRoles(RoleEnum.ADMIN, RoleEnum.CUSTOMER, RoleEnum.STAFF)
-    @Get("/search")
-    async getProductByName(@Query('name') name: string): Promise<any | undefined> {
-        return await this.productService.getAllProductByName(name);
+    @Get("/search/:categoryId")
+    @ApiParam({
+        name: 'categoryId',
+        required: false
+    })
+    async getProductByName(@Query('name') name: string, @Param('categoryId') categoryId?: number): Promise<any | undefined> {
+        return await this.productService.getAllProductByName(name, categoryId);
     }
     @hasRoles(RoleEnum.ADMIN, RoleEnum.CUSTOMER, RoleEnum.STAFF)
     @Get("/detail/:productId")
