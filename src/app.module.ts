@@ -22,6 +22,7 @@ import { BirdModule } from './main/bird/bird.module';
 import { DeliveryModule } from './main/delivery/delivery.module';
 import { PaymentModule } from './main/payment/payment.module';
 import { TransactionModule } from './main/transaction/transaction.module';
+import { StoreModule } from './main/store/store.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -39,6 +40,7 @@ import { TransactionModule } from './main/transaction/transaction.module';
     AccountModule,
     CustomerModule,
     RoleModule,
+    StoreModule,
     StaffModule,
     MealModule,
     ProductModule,
