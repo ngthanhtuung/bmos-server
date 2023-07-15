@@ -1,6 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsNotEmpty, IsNumber, IsPhoneNumber } from "class-validator";
 import { MealCheckDto } from "src/main/meal/dto/meal-check.dto";
+import { MealOrderDto } from "src/main/meal/dto/meal-order.dto";
 
 
 export class OrderCreateDto {
@@ -41,8 +42,8 @@ export class OrderCreateDto {
 
     @IsNotEmpty()
     @ApiProperty({
-        type: [MealCheckDto]
+        type: [MealOrderDto]
     })
-    public meals: MealCheckDto[];
+    public meals: MealOrderDto[];
 
 }

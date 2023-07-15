@@ -10,6 +10,7 @@ import { MealCheckDto } from './dto/meal-check.dto';
 import { ProductService } from '../product/product.service';
 import { MealUpdateDto } from './dto/meal-update.dto';
 import ApiResponse from '../../shared/res/apiReponse';
+import { MealOrderDto } from './dto/meal-order.dto';
 
 @Injectable()
 export class MealService {
@@ -90,7 +91,7 @@ export class MealService {
         }
     }
 
-    async checkMealAvailability(meals: MealCheckDto[]): Promise<any | undefined> {
+    async checkMealAvailability(meals: MealOrderDto[]): Promise<any | undefined> {
         try {
             let unavailableProducts: string[] = []; //List of unavailable products
             for (const meal of meals) {
