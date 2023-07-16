@@ -14,8 +14,8 @@ import { ChangePasswordDto } from './dto/account-changePassword.dto';
 
 @Controller('account')
 @ApiTags('User')
+@UseGuards(JwtAuthGuard, RolesGuard)
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard)
 export class AccountController {
 
     constructor(
@@ -28,13 +28,28 @@ export class AccountController {
         return await this.accountService.getUserProfile(user);
     }
 
+    @Get('/list/:role')
+    @hasRoles(RoleEnum.ADMIN)
+    @ApiParam({
+        name: 'role',
+        enum: [RoleEnum.CUSTOMER, RoleEnum.STAFF],
+    })
+    async getAllUserByRole(@Param('role') role: RoleEnum): Promise<any | undefined> {
+        return await this.accountService.getAllUser(role);
+    }
+
+    @Get('/detail/:userId')
+    @hasRoles(RoleEnum.ADMIN)
+    async getUserDetail(@Param('userId') userId: string): Promise<any | undefined> {
+        return await this.accountService.getUserDetail(userId);
+    }
+
     @Put('/profile')
     @ApiOkResponse({ description: 'Update profile successfully' })
     async updateProfile(@GetUser() user: Account, updateUser: AccountUpdateProfileDto): Promise<any | undefined> {
         return await this.accountService.updateUser(user.id, updateUser)
     }
-
-
+    
     @Put('/:userId')
     @UseGuards(RolesGuard)
     @hasRoles(RoleEnum.ADMIN)

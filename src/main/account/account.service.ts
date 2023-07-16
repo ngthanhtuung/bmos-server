@@ -5,11 +5,6 @@ import ApiResponse from 'src/shared/res/apiReponse';
 import { RoleEnum } from '../role/role.enum';
 import { AccountUpdateProfileDto } from './dto/account-update.dto';
 import { StatusEnum } from 'src/shared/status.enum';
-import { GetUser } from 'src/decorators/getUser.decorator';
-import { ApiParam } from '@nestjs/swagger';
-import { RolesGuard } from '../auth/role/roles.guard';
-import { hasRoles } from '../auth/role/roles.decorator';
-import { log } from 'console';
 import { ChangePasswordDto } from './dto/account-changePassword.dto';
 import { SharedService } from 'src/shared/shared.service';
 
@@ -101,7 +96,7 @@ export class AccountService {
     async confirmEmail(userId: string): Promise<any | undefined> {
         try {
             const statusUser = await this.accountRepository.findOne({
-                where: {id: userId},
+                where: { id: userId },
             })
             if (statusUser.status === StatusEnum.ACTIVE) {
                 throw new HttpException(new ApiResponse('Fail', 'Your account is already active'), HttpStatus.BAD_REQUEST);
@@ -134,7 +129,33 @@ export class AccountService {
         }
     }
 
+    async getAllUser(role: RoleEnum): Promise<any | undefined> {
+        try {
+            const account = await this.accountRepository.getAllUser(role);
+            if (account) {
+                return new ApiResponse('Success', 'Get all user successfully', account);
+            }
+            throw new HttpException(new ApiResponse('Fail', 'User not found'), HttpStatus.NOT_FOUND);
+        } catch (err) {
+            throw new HttpException(new ApiResponse('Fail', err.message), err.status || HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
 
+    async getUserDetail(userId: string): Promise<any | undefined> {
+        try {
+            const account = await this.accountRepository.findOne({
+                where: { id: userId },
+                relations: ['role']
+            })
+            if (account) {
+                const userDetail = await this.accountRepository.getProfile(account);
+                return new ApiResponse('Success', 'Get user detail successfully', userDetail);
+            }
+            throw new HttpException(new ApiResponse('Fail', 'User not found'), HttpStatus.NOT_FOUND);
+        } catch (err) {
+            throw new HttpException(new ApiResponse('Fail', err.message), err.status || HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
 }
 
 

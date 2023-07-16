@@ -30,6 +30,7 @@ export class ProductService {
             throw new HttpException(new ApiResponse('Fail', err.message), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
     async getProductDetail(productId: string): Promise<any | undefined> {
         try {
             return await this.productRepository.getProductDetail(productId);
@@ -37,6 +38,7 @@ export class ProductService {
             throw new HttpException(new ApiResponse('Fail', err.message), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
     async getAllProductByName(name: string, categoryId?: number): Promise<any | undefined> {
         try {
             return await this.productRepository.getAllProductByName(name,categoryId);
@@ -94,5 +96,14 @@ export class ProductService {
 
     async updateQuantityProduct(productId: string, quantity: number): Promise<any | undefined> {
         return await this.productRepository.updateQuantity(productId, quantity);
+    }
+
+    async getCountProduct(): Promise<any | undefined> {
+        try {
+           const count = await this.productRepository.count();
+           return count;
+        } catch (err) {
+            return null;
+        }
     }
 }

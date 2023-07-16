@@ -11,8 +11,8 @@ export default class ProductMeal extends BaseEntity {
     @Column('int', { name: 'amount', nullable: false, default: 1 })
     public amount: number;
     @AutoMap()
-    @Column('json', { name: 'section', nullable: false })
-    public section: any;
+    @Column('nvarchar', { name: 'section', nullable: false })
+    public section: string;
     @AutoMap()
     @ManyToOne(() => Product, (product) => product.productMeals, { onDelete: 'CASCADE' })
     public product: Product;
