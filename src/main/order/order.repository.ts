@@ -300,4 +300,27 @@ export class OrderRepository extends Repository<Order> {
         }
     }
 
+    async getProfitByYear(year: number): Promise<any | undefined> {
+        try {
+            const query = `SELECT months.month, COALESCE(SUM(orders.totalPrice), 0) AS total
+            FROM (
+              SELECT 1 AS month UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION
+              SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION
+              SELECT 9 UNION SELECT 10 UNION SELECT 11 UNION SELECT 12
+            ) AS months
+            LEFT JOIN (
+              SELECT MONTH(orderDate) AS month, SUM(totalPrice) AS totalPrice
+              FROM bird_meal.order
+              WHERE YEAR(orderDate) = ${year} AND orderStatus = 'completed'
+              GROUP BY MONTH(orderDate)
+            ) AS orders ON months.month = orders.month
+            GROUP BY months.month
+            ORDER BY months.month`
+            const result = await this.manager.query(query)
+            return result
+        } catch (err) {
+            throw new HttpException(new ApiResponse('Fail', err.message), err.status || HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
 }
