@@ -30,7 +30,11 @@ export class BirdController {
     async createBird(@Body() data: BirdCreateDto): Promise<any | undefined> {
         return await this.birdService.createBird(data);
     }
-
+    @Get('/:birdId')
+    @hasRoles()
+    async getBirdDetail(@Param('birdId') birdId: string): Promise<any | undefined> {
+        return this.birdService.getBirdDetail(birdId);
+    }
     @Put('/:birdId')
     @hasRoles(RoleEnum.ADMIN, RoleEnum.STAFF)
     async updateBird(@Param('birdId') birdId: string, @Body() data: BirdUpdateDto): Promise<any | undefined> {

@@ -45,7 +45,16 @@ export class BirdService {
             return null;
         }
     }
-
+    async getBirdDetail(birdId: string): Promise<any | undefined> {
+        try {
+            const bird = await this.birdRepository.findOne({
+                where: { id: birdId }
+            })
+            return new ApiResponse('Success', `Get bird detail successfully`, bird);
+        } catch (err) {
+            return null;
+        }
+    }
     async createBird(data: BirdCreateDto): Promise<any | undefined> {
         return await this.birdRepository.newBird(data);
     }
