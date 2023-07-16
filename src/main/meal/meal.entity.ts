@@ -6,7 +6,6 @@ import Bird from "../bird/bird.entity";
 import OrderDetail from "../order_detail/order_detail.entity";
 @Entity()
 export default class Meal extends BaseEntity {
-
     @AutoMap()
     @Column('nvarchar', { name: 'title', nullable: false, length: 255 })
     public title: string;

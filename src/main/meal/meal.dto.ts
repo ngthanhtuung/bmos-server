@@ -16,7 +16,7 @@ export class MealDTO extends BaseDTO {
 
     @AutoMap()
     public status: boolean;
-    
+
     @AutoMap()
     public image: string;
 
