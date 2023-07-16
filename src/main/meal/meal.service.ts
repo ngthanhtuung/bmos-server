@@ -229,6 +229,9 @@ export class MealService {
         }
     }
 
+    async getCountMeal(): Promise<any | number> {
+        return await this.mealRepository.getCountMeal();
+    }
 
 }
 

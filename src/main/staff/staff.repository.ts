@@ -5,10 +5,39 @@ import { HttpException, HttpStatus } from "@nestjs/common";
 import ApiResponse from "src/shared/res/apiReponse";
 import { RoleEnum } from "../role/role.enum";
 import StaffCreateDto from "./dto/staff-create.dto";
+import { StatusEnum } from "src/shared/status.enum";
 
 @CustomRepository(Staff)
 export default class StaffRepository extends Repository<Staff> {
 
+    async getAllStaff(): Promise<any | undefined> {
+        try {
+            const staffs = await this.createQueryBuilder('staff')
+                .leftJoinAndSelect('staff.account', 'account')
+                .select([
+                    'account.id',
+                    'account.fullName',
+                    'account.dob',
+                    'account.email',
+                    'account.phoneNumber',
+                    'account.avatar',
+                    'account.status',
+                    'staff.identityNumber',
+                    'staff.registerDate',
+                    'staff.quitDate'
+                ])
+                .getMany()
+            return new ApiResponse('Success', 'Get all staff successfully', staffs)
+        } catch (err) {
+            throw new HttpException(new ApiResponse('Fail', err.message), HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+
+    async getCountStaff(): Promise<any | undefined> {
+        const result = await this.createQueryBuilder('staff').getCount();
+        return result
+    }
 
     async registerStaff(data: StaffCreateDto): Promise<any | undefined> {
         const queryRunner = this.manager.connection.createQueryRunner();
@@ -28,6 +57,7 @@ export default class StaffRepository extends Repository<Staff> {
                     phoneNumber: data.phoneNumber,
                     refreshToken: '',
                     role: role,
+                    status: StatusEnum.ACTIVE
                 })
             );
             let staff;
@@ -61,4 +91,29 @@ export default class StaffRepository extends Repository<Staff> {
             queryRunner.release();
         }
     }
+
+    async disableStaff(staffId: string): Promise<any | undefined> {
+        try {
+            const staff = await this.createQueryBuilder('staff')
+                .leftJoinAndSelect('staff.account', 'account')
+                .where('account.id = :staffId', { staffId: staffId })
+                .getOne();
+            if (staff) {
+                staff.quitDate = new Date();
+                staff.account.status = StatusEnum.INACTIVE
+                const result = await this.save(staff)
+                const query = `UPDATE account set status = '${StatusEnum.INACTIVE}' WHERE id = '${staffId}'`
+                await this.query(query);
+                if (result.account.status === StatusEnum.INACTIVE && staff.quitDate !== null) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+            throw new HttpException(new ApiResponse('Fail', 'Staff not found'), HttpStatus.NOT_FOUND);
+        } catch (err) {
+            throw new HttpException(new ApiResponse('Fail', err.message), err.status || HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
 }
