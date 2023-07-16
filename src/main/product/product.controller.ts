@@ -1,4 +1,4 @@
-import { ApiBearerAuth, ApiNotFoundResponse, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiNotFoundResponse, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { ProductCreateDto } from './dto/product-create.dto';
 import { ProductService } from './product.service';
 import { Body, Controller, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
@@ -24,12 +24,16 @@ export class ProductController {
         return await this.productService.checkAvailableProduct(productId, quantity);
     }
     @hasRoles(RoleEnum.ADMIN, RoleEnum.CUSTOMER, RoleEnum.STAFF)
-    @Get("/search/:categoryId")
-    @ApiParam({
+    @Get("/search")
+    @ApiQuery({
         name: 'categoryId',
         required: false
     })
-    async getProductByName(@Query('name') name: string, @Param('categoryId') categoryId?: number): Promise<any | undefined> {
+    @ApiQuery({
+        name: 'name',
+        required: false
+    })
+    async getProductByName(@Query('name') name: string, @Query('categoryId') categoryId?: number): Promise<any | undefined> {
         return await this.productService.getAllProductByName(name, categoryId);
     }
     @hasRoles(RoleEnum.ADMIN, RoleEnum.CUSTOMER, RoleEnum.STAFF)

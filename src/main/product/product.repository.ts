@@ -67,9 +67,13 @@ export class ProductRepository extends Repository<Product> {
     }
     async getAllProductByName(name: string, categoryId?: number): Promise<any | undefined> {
         try {
-            let query = `SELECT * FROM product WHERE productName like '%${name}%'`
-            if (isNumber(Number(categoryId))) {
-                query += ` AND categoryId = '${Number(categoryId)}'; `
+            let query = `SELECT * FROM product`
+            if (isNumber(Number(categoryId)) && name !== undefined) {
+                query += ` WHERE productName like '%${name}%' AND categoryId = '${Number(categoryId)}'`
+            }else if (isNumber(Number(categoryId))) {
+                query += ` WHERE categoryId = '${Number(categoryId)}' `
+            }else if ( name !== undefined) {
+                query += ` WHERE productName like '%${name}%'`
             }
             const result = await this.query(query);
             if (result) {

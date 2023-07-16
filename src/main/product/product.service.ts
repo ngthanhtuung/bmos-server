@@ -39,7 +39,7 @@ export class ProductService {
         }
     }
 
-    async getAllProductByName(name: string, categoryId?: number): Promise<any | undefined> {
+    async getAllProductByName(name: string, categoryId: number): Promise<any | undefined> {
         try {
             return await this.productRepository.getAllProductByName(name,categoryId);
         } catch (err) {

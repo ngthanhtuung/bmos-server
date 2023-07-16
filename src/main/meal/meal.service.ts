@@ -34,9 +34,9 @@ export class MealService {
     }
 
 
-    async getAllMealByTitle(title: string): Promise<any | undefined> {
+    async getAllMealByTitle(title: string, idBird: string): Promise<any | undefined> {
         try {
-            const meals = await this.mealRepository.getAllMealsByName(title);
+            const meals = await this.mealRepository.getAllMealsByName(title, idBird);
             if (meals) {
                 return new ApiResponse('Success', 'Get all meals by title successfully', meals);
             }

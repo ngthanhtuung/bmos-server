@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { MealService } from './meal.service';
 import { MealCreateDto } from './dto/meal-create.dto';
-import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import Account from '../account/account.entity';
 import { RolesGuard } from '../auth/role/roles.guard';
 import { JwtAuthGuard } from '../auth/jwt-auth/jwt-auth.guard';
@@ -21,8 +21,16 @@ export class MealController {
     ) { }
 
     @Get('/title')
-    async getAllMealByTitle(@Query('title') title: string) {
-        return await this.mealService.getAllMealByTitle(title);
+    @ApiQuery({
+        name: 'title',
+        required: false
+    })
+    @ApiQuery({
+        name: 'idBird',
+        required: false
+    })
+    async getAllMealByTitle(@Query('title') title: string, @Query('idBird') idBird: string) {
+        return await this.mealService.getAllMealByTitle(title, idBird);
     }
     @Get('/')
     async getAllMeal() {

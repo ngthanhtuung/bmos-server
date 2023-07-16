@@ -26,7 +26,7 @@ export class BirdController {
     }
 
     @Post('/create')
-    @hasRoles(RoleEnum.ADMIN)
+    @hasRoles(RoleEnum.ADMIN, RoleEnum.STAFF)
     async createBird(@Body() data: BirdCreateDto): Promise<any | undefined> {
         return await this.birdService.createBird(data);
     }

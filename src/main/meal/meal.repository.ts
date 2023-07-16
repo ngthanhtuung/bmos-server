@@ -3,6 +3,7 @@ import { Repository } from "typeorm";
 import Meal from "./meal.entity";
 import { CustomRepository } from "src/type-orm/typeorm-ex.decorator";
 import { MealUpdateDto } from "./dto/meal-update.dto";
+import { isEmail, isEmpty } from 'class-validator';
 
 @CustomRepository(Meal)
 export class MealRepository extends Repository<Meal> {
@@ -60,8 +61,17 @@ export class MealRepository extends Repository<Meal> {
         })
         return meal;
     }
-    async getAllMealsByName(name: string): Promise<any | undefined> {
-        const query = `SELECT * FROM meal WHERE title like '%${name}%';`
+    async getAllMealsByName(title: string, idBird: string): Promise<any | undefined> {
+        console.log("title:", title);
+        console.log("idBird:", idBird);
+        let query = `SELECT * FROM meal `
+        if (title !== undefined && idBird !== undefined) {
+            query += `WHERE birdId = '${idBird}' AND title like '%${title}%'`
+        } else if (idBird !== undefined) {
+            query += `WHERE birdId = '${idBird}'`
+        } else if (title !== undefined) {
+            query += `WHERE title like '%${title}%'`
+        }
         const meal = await this.query(query)
         return meal;
     }
