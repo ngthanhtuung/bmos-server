@@ -5,6 +5,7 @@ import { MealUpdateDto } from "./dto/meal-update.dto";
 
 @CustomRepository(Meal)
 export class MealRepository extends Repository<Meal> {
+
     groupByKey(array: any, key: string) {
         return array
             .reduce((hash: any, obj: any) => {
@@ -12,6 +13,7 @@ export class MealRepository extends Repository<Meal> {
                 return Object.assign(hash, { [obj[key]]: (hash[obj[key]] || []).concat(obj) })
             }, {})
     }
+
     async getAllMeals(): Promise<any | undefined> {
         let meal = await this.createQueryBuilder('meal')
             .leftJoinAndSelect('meal.productMeals', 'productMeal')
@@ -42,11 +44,13 @@ export class MealRepository extends Repository<Meal> {
         })
         return meal;
     }
+
     async getAllMealsByName(name: string): Promise<any | undefined> {
         const query = `SELECT * FROM meal WHERE title like '%${name}%';`
         const meal = await this.query(query)
         return meal;
     }
+
     async getAllMealsByCustomer(userId: string): Promise<any | undefined> {
         const meal = await this.createQueryBuilder('meal')
             .leftJoinAndSelect('meal.bird', 'bird')
@@ -69,6 +73,7 @@ export class MealRepository extends Repository<Meal> {
             .getMany();
         return meal;
     }
+
     async getMealByBird(birdId: string): Promise<any | undefined> {
         let meal = await this.createQueryBuilder('meal')
             .leftJoinAndSelect('meal.bird', 'bird')
@@ -146,6 +151,17 @@ export class MealRepository extends Repository<Meal> {
                 });
                 return meal;
             }
+        } catch (err) {
+            return null;
+        }
+    }
+
+    async getCountMeal(): Promise<any | undefined> {
+        try {
+            const result = await this.createQueryBuilder('meal')
+                .where('createdBy = :id', { id: '' })
+                .getCount();
+            return result
         } catch (err) {
             return null;
         }

@@ -204,4 +204,8 @@ export class OrderService {
     async updateComplete(orderId: string): Promise<any | undefined> {
         return await this.orderRepository.updateComplete(orderId);
     }
+
+    async getCountOrder(status: OrderStatusEnum): Promise<any | undefined> {
+        return await this.orderRepository.getCountOrder(status);
+    }
 }

@@ -1,13 +1,64 @@
+import { MealService } from './../meal/meal.service';
 import { Repository } from "typeorm";
 import Account from "./account.entity";
 import { CustomRepository } from "src/type-orm/typeorm-ex.decorator";
 import { RoleEnum } from "../role/role.enum";
 import { AccountUpdateProfileDto } from "./dto/account-update.dto";
 import { StatusEnum } from "src/shared/status.enum";
+import { HttpException, HttpStatus } from "@nestjs/common";
+import ApiResponse from "src/shared/res/apiReponse";
 
 @CustomRepository(Account)
 export default class AccountRepository extends Repository<Account> {
 
+
+    async getAllUser(role: string): Promise<any | undefined> {
+        try {
+            if (role === RoleEnum.CUSTOMER) {
+                const customers = await this.createQueryBuilder('account')
+                    .leftJoinAndSelect('account.role', 'role')
+                    .leftJoinAndSelect('account.customer', 'customer')
+                    .select([
+                        'account.id',
+                        'account.fullName',
+                        'account.dob',
+                        'account.email',
+                        'account.phoneNumber',
+                        'account.avatar',
+                        'account.status',
+                        'account.refreshToken',
+                        'customer.point'
+                    ])
+                    .where('role.name = :role', { role: role })
+                    .getMany()
+                return customers;
+            } else {
+                const staff = await this.createQueryBuilder('account')
+                    .leftJoinAndSelect('account.role', 'role')
+                    .leftJoinAndSelect('account.staff', 'staff')
+                    .select([
+                        'account.id',
+                        'account.fullName',
+                        'account.dob',
+                        'account.email',
+                        'account.phoneNumber',
+                        'account.avatar',
+                        'account.status',
+                        'account.refreshToken',
+                        'staff.identityNumber',
+                        'staff.registerDate',
+                        'staff.quitDate'
+
+                    ])
+                    .where('role.name = :role', { role: role })
+                    .getMany()
+                return staff;
+            }
+        } catch (err) {
+            console.log('Error at getAllUser in AccountRepository: ', err.message)
+            return null;
+        }
+    }
 
     async getProfile(account: Account): Promise<any | undefined> {
         if (account.role.name === RoleEnum.CUSTOMER) {
@@ -141,6 +192,7 @@ export default class AccountRepository extends Repository<Account> {
             return false;
         }
     }
+
 
 
 }

@@ -261,7 +261,6 @@ export class OrderRepository extends Repository<Order> {
             queryRunner.release();
         }
     }
-
     //use to rollback everything if the system create order failed
     async rollBackOrder(
         cancelOrder: any,
@@ -287,6 +286,17 @@ export class OrderRepository extends Repository<Order> {
             throw new HttpException(err, HttpStatus.INTERNAL_SERVER_ERROR);
         } finally {
             queryRunner.release();
+        }
+    }
+
+    async getCountOrder(status: OrderStatusEnum): Promise<any | undefined> {
+        try {
+            const result = await this.createQueryBuilder('order')
+                .where('order.orderStatus = :status', { status: status })
+                .getCount()
+            return result
+        } catch (err) {
+            return null;
         }
     }
 
