@@ -73,48 +73,49 @@ export class OrderService {
                 return await this.mealService.getTotalPriceAndUpdateQuantityOfMeal(meal, amountMeal)
             }
             const orderResult = await this.orderRepository.createOrder(order, user, callback);
-            const fullAddress = await this.deliveryService.createFullAddress(order.shippingProvinceCode, order.shippingDistrictCode, order.shippingWardCode);
-            orderResult.shippingAddress = orderResult.shippingAddress + ", " + fullAddress
-            await this.orderRepository.save(orderResult);
+            // const fullAddress = await this.deliveryService.createFullAddress(order.shippingProvinceCode, order.shippingDistrictCode, order.shippingWardCode);
+            // orderResult.shippingAddress = orderResult.shippingAddress + ", " + fullAddress
+            // await this.orderRepository.save(orderResult);
             if (orderResult) {
                 let response = orderResult;
                 let ghnResponse;
-
-                if (order.paymentType === 'MOMO') {
-                    ghnResponse = await this.deliveryService.createOrder(orderResult, false);
-                } else {
-                    ghnResponse = await this.deliveryService.createOrder(orderResult, true, order.shippingFee);
-                }
-                if (ghnResponse != undefined) {
-                    orderResult.orderCode = ghnResponse.data.order_code
-                    orderResult.orderUrl = `https://tracking.ghn.dev/?order_code=${ghnResponse.data.order_code}`
-                    await this.orderRepository.save(orderResult);
-                    switch (order.paymentType) {
-                        case 'MOMO':
-                            const paymentResult = await this.paymentService.createPayment(orderResult)
-                            if (paymentResult !== undefined) {
-                                response = {
-                                    ...orderResult,
-                                    paymentUrl: paymentResult
-                                }
+                // if (order.paymentType === 'MOMO') {
+                //     ghnResponse = await this.deliveryService.createOrder(orderResult, false);
+                // } else {
+                //     ghnResponse = await this.deliveryService.createOrder(orderResult, true, order.shippingFee);
+                // }
+                // if (ghnResponse != undefined) {
+                //     orderResult.orderCode = ghnResponse.data.order_code
+                //     orderResult.orderUrl = `https://tracking.ghn.dev/?order_code=${ghnResponse.data.order_code}`
+                //     await this.orderRepository.save(orderResult);
+                //     //cho switch
+                //     return new ApiResponse('Success', 'Create order successfully', response);
+                // } else {
+                //     await this.rollbackOrder(orderResult.id)
+                //     throw new HttpException(new ApiResponse('Fail', 'Create order fail'), HttpStatus.INTERNAL_SERVER_ERROR)
+                // }
+                switch (order.paymentType) {
+                    case 'MOMO':
+                        const paymentResult = await this.paymentService.createPayment(orderResult)
+                        if (paymentResult !== undefined) {
+                            response = {
+                                ...orderResult,
+                                paymentUrl: paymentResult
                             }
-                            break;
-                        case 'COD':
-                            const transactionResult = await this.transactionService.createTransaction(orderResult, 'COD');
-                            if (transactionResult !== undefined) {
-                                orderResult.orderStatus = OrderStatusEnum.CONFIRMED
-                                const result = await this.orderRepository.save(orderResult)
-                                response = {
-                                    ...result
-                                }
+                        }
+                        break;
+                    case 'COD':
+                        const transactionResult = await this.transactionService.createTransaction(orderResult, 'COD');
+                        if (transactionResult !== undefined) {
+                            orderResult.orderStatus = OrderStatusEnum.CONFIRMED
+                            const result = await this.orderRepository.save(orderResult)
+                            response = {
+                                ...result
                             }
-                            break;
-                    }
-                    return new ApiResponse('Success', 'Create order successfully', response);
-                } else {
-                    await this.rollbackOrder(orderResult.id)
-                    throw new HttpException(new ApiResponse('Fail', 'Create order fail'), HttpStatus.INTERNAL_SERVER_ERROR)
+                        }
+                        break;
                 }
+                return new ApiResponse('Success', 'Create order successfully', response);
             }
             throw new HttpException(new ApiResponse('Fail', 'Create order fail'), HttpStatus.INTERNAL_SERVER_ERROR)
         } catch (err) {
