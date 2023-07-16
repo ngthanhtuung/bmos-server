@@ -14,8 +14,8 @@ export class MealRepository extends Repository<Meal> {
             "Afternoon": [],
             "Evening": [],
         }
-        productList.forEach((productMeal: any) => {
-            productMeal.section.forEach((s: string) => {
+        productList?.forEach((productMeal: any) => {
+            productMeal.section?.forEach((s: string) => {
                 switch (s) {
                     case "Morning":
                         sectionProduct['Morning'].push(productMeal)

@@ -42,13 +42,17 @@ export default class ProductMealRepository extends Repository<ProductMeal> {
                 const product = products[i];
                 const id = uuidv4();
                 query += `('${id}', '${mealId}', '${product.id}', ${product.amount}, '[`;
-                for (let index = 0; index < product.section.length; index++) {
-                    const section = product.section[index];
-                    query += `"${section}"`
-                    if (index !== product.section.length - 1) {
-                        query += ',';
-                    } else {
-                        query += `]')`;
+                if (product.section.length === 0) {
+                    query += `]')`;
+                } else {
+                    for (let index = 0; index < product.section.length; index++) {
+                        const section = product.section[index];
+                        query += `"${section}"`
+                        if (index !== product.section.length - 1) {
+                            query += ',';
+                        } else {
+                            query += `]')`;
+                        }
                     }
                 }
                 if (i !== products.length - 1) {
