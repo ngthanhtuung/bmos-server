@@ -7,12 +7,23 @@ import { v4 as uuidv4 } from 'uuid';
 export default class ProductMealRepository extends Repository<ProductMeal> {
 
     async insertProductMeal(mealId: string, data: any[]): Promise<any | undefined> {
+        console.log("Data:", data);
+
         try {
             let query = 'INSERT INTO product_meal (id, mealId, productId, amount, section) VALUES ';
             for (let i = 0; i < data.length; i++) {
                 const product = data[i];
                 const id = uuidv4();
-                query += `('${id}', '${mealId}', '${product.id}', ${product.amount}, '${product.section}')`;
+                query += `('${id}', '${mealId}', '${product.id}', ${product.amount}, '[`;
+                for (let index = 0; index < product.section.length; index++) {
+                    const section = product.section[index];
+                    query += `"${section}"`
+                    if (index !== product.section.length - 1) {
+                        query += ',';
+                    }else{
+                        query += `]')`;
+                    }
+                }
                 if (i !== data.length - 1) {
                     query += ', ';
                 }
