@@ -193,7 +193,7 @@ export class MealService {
                 meal.title = data.title;
                 meal.description = data.description;
                 meal.status = data.status;
-                meal.image = data.title;
+                meal.image = data.image;
                 meal.bird = bird;
                 const newMealUpdate = await this.mealRepository.save(meal);
                 console.log("newMealUpdate:", newMealUpdate);
