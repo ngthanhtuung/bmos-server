@@ -1,8 +1,8 @@
+import { BirdService } from './../bird/bird.service';
 import { Repository } from "typeorm";
 import Meal from "./meal.entity";
 import { CustomRepository } from "src/type-orm/typeorm-ex.decorator";
 import { MealUpdateDto } from "./dto/meal-update.dto";
-import { MealCreateDto, ProductInMealDto } from "./dto/meal-create.dto";
 
 @CustomRepository(Meal)
 export class MealRepository extends Repository<Meal> {
@@ -14,7 +14,7 @@ export class MealRepository extends Repository<Meal> {
             "Afternoon": [],
             "Evening": [],
         }
-        productList.forEach((productMeal: ProductInMealDto) => {
+        productList.forEach((productMeal: any) => {
             productMeal.section.forEach((s: string) => {
                 switch (s) {
                     case "Morning":
@@ -28,12 +28,12 @@ export class MealRepository extends Repository<Meal> {
                         break;
                 }
             })
-
         });
         return sectionProduct
     }
     async getAllMeals(): Promise<any | undefined> {
         let meal = await this.createQueryBuilder('meal')
+            .leftJoinAndSelect('meal.bird', 'bird')
             .leftJoinAndSelect('meal.productMeals', 'productMeal')
             .leftJoinAndSelect('productMeal.product', 'product')
             .select([
@@ -41,6 +41,7 @@ export class MealRepository extends Repository<Meal> {
                 'meal.title',
                 'meal.description',
                 'meal.image',
+                'bird.id',
                 'productMeal.amount',
                 'productMeal.section',
                 'product.id',
@@ -74,6 +75,7 @@ export class MealRepository extends Repository<Meal> {
                 'meal.title',
                 'meal.description',
                 'meal.image',
+                'bird.id',
                 'productMeal.amount',
                 'product.id',
                 'product.productName',
@@ -96,6 +98,7 @@ export class MealRepository extends Repository<Meal> {
                 'meal.title',
                 'meal.description',
                 'meal.image',
+                'meal.birdId',
                 'productMeal.amount',
                 'productMeal.section',
                 'product.id',
@@ -115,6 +118,7 @@ export class MealRepository extends Repository<Meal> {
 
     async getMealById(mealId: string): Promise<any | undefined> {
         const meal: any = await this.createQueryBuilder('meal')
+            .leftJoinAndSelect('meal.bird', 'bird')
             .leftJoinAndSelect('meal.productMeals', 'productMeal')
             .leftJoinAndSelect('productMeal.product', 'product')
             .select([
@@ -124,6 +128,7 @@ export class MealRepository extends Repository<Meal> {
                 'meal.createdBy',
                 'meal.status',
                 'meal.image',
+                'bird.id',
                 'productMeal.amount',
                 'productMeal.section',
                 'product.id',

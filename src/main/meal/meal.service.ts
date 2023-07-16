@@ -80,7 +80,7 @@ export class MealService {
             meal.createdBy = user.role.name === RoleEnum.CUSTOMER ? user.id : '';
             const newMeal = await this.mealRepository.save(meal);
             if (newMeal) {
-                const result = await this.productMealService.insertProductMeal(newMeal.id, data.products);
+                const result = await this.productMealService.insertProductMeal(newMeal.id, data.sections);
                 if (result) {
                     const response = await this.mealRepository.getMealById(newMeal.id);
                     return new ApiResponse('Success', 'Create meal successfully', response);
@@ -188,23 +188,21 @@ export class MealService {
                 if (!bird) {
                     throw new HttpException(new ApiResponse('Fail', 'Bird do not exist!!!'), HttpStatus.NOT_FOUND)
                 }
-                const meal: MealUpdateDto = {
-                    title: data.title,
-                    description: data.description,
-                    status: data.status,
-                    birdId: bird.id,
-                    image: data.image,
-                    id: data.id,
-                    products: data.products
-                }
-                const newMealUpdate = await this.mealRepository.updateMeal(meal);
+                const meal = new Meal()
+                meal.id = data.id;
+                meal.title = data.title;
+                meal.description = data.description;
+                meal.status = data.status;
+                meal.image = data.title;
+                meal.bird = bird;
+                const newMealUpdate = await this.mealRepository.save(meal);
                 console.log("newMealUpdate:", newMealUpdate);
                 if (newMealUpdate) {
                     // delete meal in product_meals
                     const flagCheckDelete = await this.productMealService.deleteProductMeal(newMealUpdate.id);
                     console.log("flagCheckDelete:", flagCheckDelete);
                     if (flagCheckDelete) {
-                        await this.productMealService.insertProductMeal(newMealUpdate.id, data.products);
+                        await this.productMealService.insertProductMeal(newMealUpdate.id, data.sections);
                         const response = await this.mealRepository.getMealById(newMealUpdate.id);
                         return new ApiResponse('Success', 'Update meal successfully', response);
                     }
@@ -228,7 +226,7 @@ export class MealService {
             throw new HttpException(new ApiResponse('Fail', err.message), err.status || HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
-    
+
     async getCountMeal(): Promise<any | number> {
         return await this.mealRepository.getCountMeal();
     }
