@@ -5,14 +5,41 @@ import { v4 as uuidv4 } from 'uuid';
 
 @CustomRepository(ProductMeal)
 export default class ProductMealRepository extends Repository<ProductMeal> {
-
+    handleDataProduct(data: any[]) {
+        const products = [];
+        data.forEach(section => {
+            for (const key in section) {
+                const sectionName = key;
+                console.log("sectionName:", sectionName);
+                const items = section[key];
+                console.log("Items:", items);
+                items.forEach(item => {
+                    const productId = item.id;
+                    const productAmount = item.amount;
+                    const existingProduct = products.find(product => product.id === productId);
+                    if (existingProduct) {
+                        existingProduct.section.push(sectionName);
+                    } else {
+                        const newProduct = {
+                            id: productId,
+                            amount: productAmount,
+                            section: [sectionName]
+                        };
+                        products.push(newProduct);
+                    }
+                });
+            }
+        });
+        return products
+    }
     async insertProductMeal(mealId: string, data: any[]): Promise<any | undefined> {
         console.log("Data:", data);
-
         try {
             let query = 'INSERT INTO product_meal (id, mealId, productId, amount, section) VALUES ';
-            for (let i = 0; i < data.length; i++) {
-                const product = data[i];
+            const products = this.handleDataProduct(data)
+            console.log("ProductList:", products);
+            for (let i = 0; i < products.length; i++) {
+                const product = products[i];
                 const id = uuidv4();
                 query += `('${id}', '${mealId}', '${product.id}', ${product.amount}, '[`;
                 for (let index = 0; index < product.section.length; index++) {
@@ -24,12 +51,12 @@ export default class ProductMealRepository extends Repository<ProductMeal> {
                         query += `]')`;
                     }
                 }
-                if (i !== data.length - 1) {
+                if (i !== products.length - 1) {
                     query += ', ';
                 }
             }
             const result = await this.query(query);
-            if (data.length === result.affectedRows) {
+            if (products.length === result.affectedRows) {
                 return true;
             }
         } catch (err) {

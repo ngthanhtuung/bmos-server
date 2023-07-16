@@ -12,16 +12,11 @@ export class ProductInMealDto {
     }
     )
     public amount: number;
-
-    @ApiProperty({
-        type: String,
-        example: ["Morning", "Afternoon", "Evening"]
-    }
-    )
-    public section: Array<string>;
-
 }
-
+export class ListSectionDTO {
+    @ApiProperty()
+    public section: Array<ProductInMealDto>;
+}
 export class MealCreateDto {
 
     @IsNotEmpty()
@@ -39,12 +34,11 @@ export class MealCreateDto {
     @IsNotEmpty()
     @ApiProperty()
     public image: string;
-
     @IsNotEmpty()
     @ApiProperty({
-        type: [ProductInMealDto],
+        type: [ListSectionDTO],
     })
-    public products: ProductInMealDto[];
+    public sections: Array<ListSectionDTO>
 }
 
 

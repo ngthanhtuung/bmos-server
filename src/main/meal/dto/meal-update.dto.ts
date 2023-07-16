@@ -8,12 +8,10 @@ export class ProductInMealDto {
     public id: string;
     @ApiProperty()
     public amount: number;
-    @ApiProperty({
-        type: String,
-        example: ["Morning", "Afternoon", "Evening"]
-    }
-    )
-    public section: Array<string>;
+}
+export class ListSectionDTO {
+    @ApiProperty()
+    public section: Array<ProductInMealDto>;
 
 }
 export class MealUpdateDto {
@@ -43,7 +41,7 @@ export class MealUpdateDto {
 
     @IsNotEmpty()
     @ApiProperty({
-        type: [ProductInMealDto],
+        type: [ListSectionDTO],
     })
-    public products: ProductInMealDto[];
+    public sections: ListSectionDTO[]
 }
