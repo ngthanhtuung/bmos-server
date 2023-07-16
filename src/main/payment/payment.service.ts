@@ -21,8 +21,6 @@ export class PaymentService {
         @Inject(forwardRef(() => OrderService))
         private readonly orderService: OrderService,
         private readonly transactionService: TransactionService,
-        private readonly sharedService: SharedService,
-        private readonly httpService: HttpService
 
     ) { }
     private readonly SERVER_HOST = this.configService.get<string>('SERVER_HOST');

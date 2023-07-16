@@ -34,11 +34,11 @@ export class StoreController {
             const confirmOrderQuantity = await this.orderService.getCountOrder(OrderStatusEnum.CONFIRMED)
             const orderCompleted = await this.orderService.getCountOrder(OrderStatusEnum.COMPLETED)
             const orderCancel = await this.orderService.getCountOrder(OrderStatusEnum.CANCELED)
-            const newOrder = createdOrderQuantity + confirmOrderQuantity
             const response = {
                 'TotalProduct': productQuantity,
                 'TotalMeal': mealQuantity,
-                'NewOrder': newOrder,
+                'CreatedOrder': createdOrderQuantity,
+                'ConfirmedOrder': confirmOrderQuantity,
                 'OrderCompleted': orderCompleted,
                 'OrderCancel': orderCancel
             }
