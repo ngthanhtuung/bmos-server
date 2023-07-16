@@ -23,6 +23,7 @@ import { DeliveryModule } from './main/delivery/delivery.module';
 import { PaymentModule } from './main/payment/payment.module';
 import { TransactionModule } from './main/transaction/transaction.module';
 import { StoreModule } from './main/store/store.module';
+import { NewsModule } from './main/news/news.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -53,6 +54,7 @@ import { StoreModule } from './main/store/store.module';
     ProductMealModule,
     BirdModule,
     DeliveryModule,
+    NewsModule
   ],
   controllers: [AppController],
   providers: [AppService],

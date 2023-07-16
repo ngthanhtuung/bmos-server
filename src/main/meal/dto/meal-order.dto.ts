@@ -7,5 +7,5 @@ export class MealOrderDto {
     public id: string;
     @ApiProperty()
     public amount: number;
-    
+
 }
