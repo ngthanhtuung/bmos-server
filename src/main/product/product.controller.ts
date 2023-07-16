@@ -53,7 +53,7 @@ export class ProductController {
         return await this.productService.getAllProduct();
     }
 
-    @hasRoles(RoleEnum.ADMIN)
+    @hasRoles(RoleEnum.ADMIN, RoleEnum.STAFF)
     @Post("/")
     async createProduct(@Body() data: ProductCreateDto): Promise<any | undefined> {
         return await this.productService.createProduct(data);
