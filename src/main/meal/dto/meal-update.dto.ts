@@ -8,8 +8,12 @@ export class ProductInMealDto {
     public id: string;
     @ApiProperty()
     public amount: number;
-    @ApiProperty()
-    public section: string;
+    @ApiProperty({
+        type: String,
+        example: ["Morning", "Afternoon", "Evening"]
+    }
+    )
+    public section: Array<string>;
 
 }
 export class MealUpdateDto {

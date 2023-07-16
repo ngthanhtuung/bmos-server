@@ -44,7 +44,6 @@ export class MealService {
             throw new HttpException(new ApiResponse('Fail', err.message), err.status || HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
-
     async getAllMealByCustomer(userId: string): Promise<any | undefined> {
         try {
             const meals = await this.mealRepository.getAllMealsByCustomer(userId);
@@ -55,6 +54,7 @@ export class MealService {
             throw new HttpException(new ApiResponse('Fail', err.message), err.status || HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
+
 
     async getMealByBird(birdId: string): Promise<any | undefined> {
         try {
@@ -68,7 +68,8 @@ export class MealService {
             throw new HttpException(new ApiResponse('Fail', err.message), err.status || HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
-    
+
+
     async createMeal(data: MealCreateDto, user: Account) {
         try {
             const meal = new Meal();
@@ -227,10 +228,8 @@ export class MealService {
             throw new HttpException(new ApiResponse('Fail', err.message), err.status || HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
-
     async getCountMeal(): Promise<any | number> {
         return await this.mealRepository.getCountMeal();
     }
-
 }
 
