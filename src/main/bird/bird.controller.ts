@@ -31,7 +31,6 @@ export class BirdController {
         return await this.birdService.createBird(data);
     }
     @Get('/:birdId')
-    @hasRoles()
     async getBirdDetail(@Param('birdId') birdId: string): Promise<any | undefined> {
         return this.birdService.getBirdDetail(birdId);
     }
