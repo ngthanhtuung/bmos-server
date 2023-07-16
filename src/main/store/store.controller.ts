@@ -9,6 +9,7 @@ import { RoleEnum } from '../role/role.enum';
 import { OrderService } from '../order/order.service';
 import { OrderStatusEnum } from '../order/order-status.enum';
 import ApiResponse from 'src/shared/res/apiReponse';
+import { StaffService } from '../staff/staff.service';
 
 @Controller('store')
 @ApiTags('Store Dashboard')
@@ -19,7 +20,8 @@ export class StoreController {
     constructor(
         private readonly productService: ProductService,
         private readonly mealService: MealService,
-        private readonly orderService: OrderService
+        private readonly orderService: OrderService,
+        private readonly staffService: StaffService
     ) { }
 
     @Get('/staff-dashboard')
@@ -49,7 +51,17 @@ export class StoreController {
     @Get('/admin-dashboard')
     @hasRoles(RoleEnum.ADMIN)
     async adminDashboard(): Promise<any | undefined> {
-
+        try {
+            const staffQuantity = await this.staffService.getCountStaffInStore();
+            const profitByYear = await this.orderService.getProfitByYear(2023);
+            const response = {
+                'TotalStaff': staffQuantity,
+                'Profit': profitByYear,
+            }
+            return new ApiResponse('Success', 'Data admin dashboard', response);
+        } catch (err) {
+            throw new HttpException(new ApiResponse('Error', err.message), err.status || HttpStatus.INTERNAL_SERVER_ERROR)
+        }
     }
 
 }

@@ -228,6 +228,7 @@ export class MealService {
             throw new HttpException(new ApiResponse('Fail', err.message), err.status || HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
+    
     async getCountMeal(): Promise<any | number> {
         return await this.mealRepository.getCountMeal();
     }

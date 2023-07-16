@@ -208,4 +208,8 @@ export class OrderService {
     async getCountOrder(status: OrderStatusEnum): Promise<any | undefined> {
         return await this.orderRepository.getCountOrder(status);
     }
+
+    async getProfitByYear(year: number): Promise<any | undefined> {
+        return await this.orderRepository.getProfitByYear(year);
+    }
 }
