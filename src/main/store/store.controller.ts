@@ -10,6 +10,8 @@ import { OrderService } from '../order/order.service';
 import { OrderStatusEnum } from '../order/order-status.enum';
 import ApiResponse from 'src/shared/res/apiReponse';
 import { StaffService } from '../staff/staff.service';
+import { AccountService } from '../account/account.service';
+import { StatusEnum } from 'src/shared/status.enum';
 
 @Controller('store')
 @ApiTags('Store Dashboard')
@@ -21,7 +23,8 @@ export class StoreController {
         private readonly productService: ProductService,
         private readonly mealService: MealService,
         private readonly orderService: OrderService,
-        private readonly staffService: StaffService
+        private readonly staffService: StaffService,
+        private readonly accountService: AccountService
     ) { }
 
     @Get('/staff-dashboard')
@@ -54,8 +57,14 @@ export class StoreController {
         try {
             const staffQuantity = await this.staffService.getCountStaffInStore();
             const profitByYear = await this.orderService.getProfitByYear(2023);
+            const accountActive = await this.accountService.getCountUserByStatus(StatusEnum.ACTIVE)
+            const accountInactive = await this.accountService.getCountUserByStatus(StatusEnum.INACTIVE)
+            const accountUnverified = await this.accountService.getCountUserByStatus(StatusEnum.UNVERIFIED)
             const response = {
                 'TotalStaff': staffQuantity,
+                'TotalAccountActive': accountActive,
+                'TotalAccountInactive': accountInactive,
+                'TotalAccountUnverified': accountUnverified,
                 'Profit': profitByYear,
             }
             return new ApiResponse('Success', 'Data admin dashboard', response);

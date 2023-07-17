@@ -46,14 +46,15 @@ export class AccountController {
 
     @Put('/profile')
     @ApiOkResponse({ description: 'Update profile successfully' })
-    async updateProfile(@GetUser() user: Account, updateUser: AccountUpdateProfileDto): Promise<any | undefined> {
+    @hasRoles(RoleEnum.CUSTOMER)
+    async updateProfile(@GetUser() user: Account, @Body() updateUser: AccountUpdateProfileDto): Promise<any | undefined> {
         return await this.accountService.updateUser(user.id, updateUser)
     }
-    
+
     @Put('/:userId')
     @UseGuards(RolesGuard)
     @hasRoles(RoleEnum.ADMIN)
-    @ApiOkResponse({ description: 'Get profile successfully' })
+    @ApiOkResponse({ description: '(FOR ADMIN ONLY) Update profile successfully' })
     async updateUser(
         @Param('userId') userId: string,
         @Body() updateProfile: AccountUpdateProfileDto
