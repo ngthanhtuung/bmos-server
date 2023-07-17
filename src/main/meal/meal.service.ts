@@ -33,7 +33,6 @@ export class MealService {
         }
     }
 
-
     async getAllMealByTitle(title: string, idBird: string): Promise<any | undefined> {
         try {
             const meals = await this.mealRepository.getAllMealsByName(title, idBird);
@@ -44,6 +43,7 @@ export class MealService {
             throw new HttpException(new ApiResponse('Fail', err.message), err.status || HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
+
     async getAllMealByCustomer(userId: string): Promise<any | undefined> {
         try {
             const meals = await this.mealRepository.getAllMealsByCustomer(userId);
@@ -68,7 +68,6 @@ export class MealService {
             throw new HttpException(new ApiResponse('Fail', err.message), err.status || HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
-
 
     async createMeal(data: MealCreateDto, user: Account) {
         try {
@@ -118,7 +117,6 @@ export class MealService {
     }
 
     async getTotalPriceAndUpdateQuantityOfMeal(meal: any, amountMeal: number): Promise<any | undefined> {
-
         try {
             let totalPrice = 0
             let productInfo = []

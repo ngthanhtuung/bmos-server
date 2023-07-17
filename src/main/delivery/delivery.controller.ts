@@ -37,7 +37,6 @@ export class DeliveryController {
 
     @Delete('/cancel/:orderCode')
     async cancelOrder(@Param('orderCode') orderCode: string): Promise<any | undefined> {
-        console.log('Order Code: ', orderCode)
         return await this.deliveryService.cancelOrder(orderCode);
     }
 

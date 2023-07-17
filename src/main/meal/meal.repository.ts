@@ -32,6 +32,7 @@ export class MealRepository extends Repository<Meal> {
         });
         return sectionProduct
     }
+
     async getAllMeals(): Promise<any | undefined> {
         let meal = await this.createQueryBuilder('meal')
             .leftJoinAndSelect('meal.bird', 'bird')
@@ -61,6 +62,8 @@ export class MealRepository extends Repository<Meal> {
         })
         return meal;
     }
+
+
     async getAllMealsByName(title: string, idBird: string): Promise<any | undefined> {
         console.log("title:", title);
         console.log("idBird:", idBird);
@@ -75,8 +78,10 @@ export class MealRepository extends Repository<Meal> {
         const meal = await this.query(query)
         return meal;
     }
+
+
     async getAllMealsByCustomer(userId: string): Promise<any | undefined> {
-        const meal = await this.createQueryBuilder('meal')
+        let meal = await this.createQueryBuilder('meal')
             .leftJoinAndSelect('meal.bird', 'bird')
             .leftJoinAndSelect('meal.productMeals', 'productMeal')
             .leftJoinAndSelect('productMeal.product', 'product')
@@ -87,6 +92,7 @@ export class MealRepository extends Repository<Meal> {
                 'meal.image',
                 'bird.id',
                 'productMeal.amount',
+                'productMeal.section',
                 'product.id',
                 'product.productName',
                 'product.expiredDate',
@@ -96,6 +102,9 @@ export class MealRepository extends Repository<Meal> {
             ])
             .where('createdBy = :userId', { userId })
             .getMany();
+        meal.map((i: any) => {
+            i.productMeals = this.handleSectionProduct(meal)
+        })
         return meal;
     }
     async getMealByBird(birdId: string): Promise<any | undefined> {

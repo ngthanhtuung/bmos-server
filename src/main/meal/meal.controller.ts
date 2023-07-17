@@ -32,6 +32,7 @@ export class MealController {
     async getAllMealByTitle(@Query('title') title: string, @Query('idBird') idBird: string) {
         return await this.mealService.getAllMealByTitle(title, idBird);
     }
+    
     @Get('/')
     async getAllMeal() {
         return await this.mealService.getAllMeal();
