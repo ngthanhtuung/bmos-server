@@ -156,6 +156,14 @@ export class AccountService {
             throw new HttpException(new ApiResponse('Fail', err.message), err.status || HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
+
+    async getCountUserByStatus(status: StatusEnum): Promise<any | undefined> {
+        try {
+            return await this.accountRepository.getCountUserByStatus(status);
+        } catch (err) {
+            return null;
+        }
+    }
 }
 
 

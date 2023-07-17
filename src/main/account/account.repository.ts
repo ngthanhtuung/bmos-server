@@ -48,7 +48,6 @@ export default class AccountRepository extends Repository<Account> {
                         'staff.identityNumber',
                         'staff.registerDate',
                         'staff.quitDate'
-
                     ])
                     .where('role.name = :role', { role: role })
                     .getMany()
@@ -109,7 +108,8 @@ export default class AccountRepository extends Repository<Account> {
                 .set({
                     fullName: updateProfile.fullName,
                     dob: updateProfile.dob,
-                    phoneNumber: updateProfile.phoneNumber
+                    phoneNumber: updateProfile.phoneNumber,
+                    avatar: updateProfile.avatar
                 })
                 .where('id = :id', { id: userId })
                 .execute();
@@ -193,6 +193,15 @@ export default class AccountRepository extends Repository<Account> {
         }
     }
 
-
+    async getCountUserByStatus(status: StatusEnum): Promise<any | undefined> {
+        try {
+            const count = await this.createQueryBuilder('account')
+                .where('account.status = :status', { status: status })
+                .getCount();
+            return count;
+        } catch (err) {
+            return null;
+        }
+    }
 
 }
