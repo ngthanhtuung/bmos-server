@@ -180,7 +180,7 @@ export class OrderRepository extends Repository<Order> {
 
     async createOrder(
         data: OrderCreateDto,
-        user: any,
+        user: Account,
         fn: (meal: any, amountMeal: number) => Promise<any>
     ): Promise<any | undefined> {
         const queryRunner = this.manager.connection.createQueryRunner();
@@ -190,11 +190,11 @@ export class OrderRepository extends Repository<Order> {
             const account = await this.manager.findOne('Account', {
                 where: { id: user.id }
             })
+            console.log('Account at createOrder repo: ', account);
             const customer = await this.manager.findOne('Customer', {
                 where: { account: account }
             }) //Finding customer to create order
-
-            console.log('Customer at createOrder: ', customer);
+            console.log('Customer at createOrder repo: ', customer);
             const order = await queryRunner.manager.save( //Creating order
                 queryRunner.manager.create('Order', {
                     name: data.name,
