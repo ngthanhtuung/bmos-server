@@ -47,7 +47,6 @@ export default class StaffRepository extends Repository<Staff> {
             const role = await queryRunner.manager.findOne('Role', {
                 where: { name: RoleEnum.STAFF }
             })
-
             const account = await queryRunner.manager.save(
                 queryRunner.manager.create('Account', {
                     fullName: data.fullName,
