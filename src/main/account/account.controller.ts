@@ -46,7 +46,6 @@ export class AccountController {
 
     @Put('/profile')
     @ApiOkResponse({ description: 'Update profile successfully' })
-    @hasRoles(RoleEnum.CUSTOMER)
     async updateProfile(@GetUser() user: Account, @Body() updateUser: AccountUpdateProfileDto): Promise<any | undefined> {
         return await this.accountService.updateUser(user.id, updateUser)
     }

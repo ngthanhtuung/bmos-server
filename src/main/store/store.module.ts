@@ -5,6 +5,7 @@ import { MealModule } from '../meal/meal.module';
 import { StaffModule } from '../staff/staff.module';
 import { OrderModule } from '../order/order.module';
 import { AccountModule } from '../account/account.module';
+import { NewsModule } from '../news/news.module';
 
 @Module({
   imports: [
@@ -12,7 +13,8 @@ import { AccountModule } from '../account/account.module';
     ProductModule,
     StaffModule,
     OrderModule,
-    AccountModule
+    AccountModule,
+    NewsModule
   ],
   controllers: [StoreController]
 })

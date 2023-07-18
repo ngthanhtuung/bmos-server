@@ -8,6 +8,7 @@ import { NewsRepository } from './news.repository';
   imports: [
     TypeOrmExModule.forCustomRepository([NewsRepository])],
   controllers: [NewsController],
-  providers: [NewsService]
+  providers: [NewsService],
+  exports: [NewsService]
 })
 export class NewsModule { }

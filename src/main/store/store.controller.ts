@@ -1,3 +1,4 @@
+import { NewsService } from './../news/news.service';
 import { MealService } from './../meal/meal.service';
 import { ProductService } from './../product/product.service';
 import { Controller, Get, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
@@ -24,7 +25,8 @@ export class StoreController {
         private readonly mealService: MealService,
         private readonly orderService: OrderService,
         private readonly staffService: StaffService,
-        private readonly accountService: AccountService
+        private readonly accountService: AccountService,
+        private readonly newsService: NewsService
     ) { }
 
     @Get('/staff-dashboard')
@@ -60,11 +62,13 @@ export class StoreController {
             const accountActive = await this.accountService.getCountUserByStatus(StatusEnum.ACTIVE)
             const accountInactive = await this.accountService.getCountUserByStatus(StatusEnum.INACTIVE)
             const accountUnverified = await this.accountService.getCountUserByStatus(StatusEnum.UNVERIFIED)
+            const newsQuantity = await this.newsService.getCountNews()
             const response = {
                 'TotalStaff': staffQuantity,
                 'TotalAccountActive': accountActive,
                 'TotalAccountInactive': accountInactive,
                 'TotalAccountUnverified': accountUnverified,
+                'TotalNews:': newsQuantity,
                 'Profit': profitByYear,
             }
             return new ApiResponse('Success', 'Data admin dashboard', response);
