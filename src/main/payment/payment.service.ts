@@ -1,4 +1,4 @@
-
+import { OrderStatusEnum } from './../order/order-status.enum';
 import { HttpException, HttpStatus, Inject, Injectable, Query, Res, forwardRef } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
@@ -7,11 +7,7 @@ import Order from '../order/order.entity';
 import ApiResponse from 'src/shared/res/apiReponse';
 import { OrderService } from '../order/order.service';
 import { TransactionService } from '../transaction/transaction.service';
-import { OrderStatusEnum } from '../order/order-status.enum';
-import { SharedService } from 'src/shared/shared.service';
 import { v4 as uuidv4 } from 'uuid';
-import { HttpService } from '@nestjs/axios';
-
 @Injectable()
 export class PaymentService {
 
@@ -95,7 +91,6 @@ export class PaymentService {
         }
     }
 
-    
 
     // async refundPayment(order: Order): Promise<any | undefined> {
     //     try {
