@@ -68,7 +68,7 @@ export class StoreController {
                 'TotalAccountActive': accountActive,
                 'TotalAccountInactive': accountInactive,
                 'TotalAccountUnverified': accountUnverified,
-                'TotalNews:': newsQuantity,
+                'TotalNews': newsQuantity,
                 'Profit': profitByYear,
             }
             return new ApiResponse('Success', 'Data admin dashboard', response);
