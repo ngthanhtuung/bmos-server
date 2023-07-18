@@ -35,9 +35,4 @@ export class DeliveryController {
         return await this.deliveryService.getShippingFee(data);
     }
 
-    @Delete('/cancel/:orderCode')
-    async cancelOrder(@Param('orderCode') orderCode: string): Promise<any | undefined> {
-        return await this.deliveryService.cancelOrder(orderCode);
-    }
-
 }

@@ -14,5 +14,4 @@ export default class StaffCreateDto extends AccountCreateDto {
     })
     public avatar: string;
 
-
 }
