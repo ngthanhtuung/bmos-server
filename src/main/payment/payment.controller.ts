@@ -1,4 +1,4 @@
-import { Controller, Query, Post, Get, HttpException, Res, Redirect } from '@nestjs/common';
+import { Controller, Query, Post, Get, HttpException, Res, Redirect, Param } from '@nestjs/common';
 import { PaymentService } from './payment.service';
 import { ApiTags } from '@nestjs/swagger';
 
@@ -29,7 +29,6 @@ export class PaymentController {
     ): Promise<any | undefined> {
         return await this.paymentService.confirmPayment(orderId, resultCode, transId);
     }
-
 
     // @Post()
     // async createPayment(@Query('amount') amount: string): Promise<string> {

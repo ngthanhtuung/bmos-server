@@ -54,6 +54,7 @@ export default class StaffRepository extends Repository<Staff> {
                     email: data.email,
                     password: data.password,
                     dob: data.dob,
+                    avatar: data.avatar,
                     phoneNumber: data.phoneNumber,
                     refreshToken: '',
                     role: role,
