@@ -7,6 +7,7 @@ import { NewsCreateDto } from "./dto/news-dto-create";
 import * as moment from 'moment';
 import 'moment-timezone';
 import { NewsUpdateDTO } from "./dto/news-dto-update";
+import { ContextUtils } from "@nestjs/core/helpers/context-utils";
 
 @CustomRepository(News)
 export class NewsRepository extends Repository<News> {
@@ -37,6 +38,7 @@ export class NewsRepository extends Repository<News> {
         }
 
     }
+
     async getAllNews(): Promise<any | undefined> {
         try {
             const News = await this.find()
@@ -47,6 +49,7 @@ export class NewsRepository extends Repository<News> {
             throw new HttpException(err, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
     async updateStatusNews(idNews: string, status: boolean): Promise<any | undefined> {
         try {
             const updatedStatus = await this.createQueryBuilder()
@@ -63,6 +66,7 @@ export class NewsRepository extends Repository<News> {
             throw new HttpException(new ApiResponse('Fail', err.message), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
     async updateNews(idNews: string, data: NewsUpdateDTO): Promise<any | undefined> {
         try {
             const updatedStatus = await this.createQueryBuilder()
@@ -81,6 +85,8 @@ export class NewsRepository extends Repository<News> {
             throw new HttpException(new ApiResponse('Fail', err.message), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+
     async getNewsDetail(idNews: string): Promise<any | undefined> {
         try {
             const query = `SELECT * FROM news WHERE news.id = '${idNews}'`
@@ -90,6 +96,15 @@ export class NewsRepository extends Repository<News> {
             }
         } catch (err) {
             throw new HttpException(err, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    async getCountNews(): Promise<any | undefined> {
+        try {
+            const count = await this.createQueryBuilder('news').getCount();
+            return count;
+        } catch (err) {
+            return null;
         }
     }
 }

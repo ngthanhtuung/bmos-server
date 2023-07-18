@@ -24,6 +24,7 @@ export class NewsService {
             throw new HttpException(new ApiResponse('Fail', err.message), err.status || HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
+
     async getNewsDetail(idNews: string): Promise<any | undefined> {
         try {
             const news = await this.newsRepository.getNewsDetail(idNews);
@@ -35,13 +36,24 @@ export class NewsService {
             throw new HttpException(new ApiResponse('Fail', err.message), err.status || HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
+
     async createNews(data: NewsCreateDto): Promise<any | undefined> {
         return await this.newsRepository.createNews(data);
     }
+
     async updateStatus(idNews: string, status: boolean): Promise<any | undefined> {
         return await this.newsRepository.updateStatusNews(idNews, status);
     }
+
     async updateNews(idNews: string, data: NewsUpdateDTO): Promise<any | undefined> {
         return await this.newsRepository.updateNews(idNews, data);
+    }
+
+    async getCountNews(): Promise<any | undefined> {
+        try {
+            return await this.newsRepository.getCountNews();
+        } catch (err) {
+            return null;
+        }
     }
 }
