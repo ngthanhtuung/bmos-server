@@ -166,6 +166,7 @@ export class MealRepository extends Repository<Meal> {
                 'meal.status',
                 'meal.image',
                 'bird.id',
+                'bird.birdName',
                 'productMeal.amount',
                 'productMeal.section',
                 'product.id',
