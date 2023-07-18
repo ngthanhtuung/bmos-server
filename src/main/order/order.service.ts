@@ -23,6 +23,7 @@ export class OrderService {
         private readonly deliveryService: DeliveryService,
         private readonly transactionService: TransactionService,
         private readonly paymentService: PaymentService,
+        private readonly customerService: CustomerService
     ) { }
 
 
@@ -64,6 +65,8 @@ export class OrderService {
 
     async createOrder(order: OrderCreateDto, user: Account): Promise<any | undefined> {
         try {
+            const customer = await this.customerService.getUser(user.id);
+            console.log('Customer: ', customer)
             const meals = order.meals
             const unavailableProducts = await this.mealService.checkMealAvailability(meals);
             if (unavailableProducts.length !== 0) {
@@ -75,6 +78,7 @@ export class OrderService {
             const orderResult = await this.orderRepository.createOrder(order, user, callback);
             const fullAddress = await this.deliveryService.createFullAddress(order.shippingProvinceCode, order.shippingDistrictCode, order.shippingWardCode);
             orderResult.shippingAddress = orderResult.shippingAddress + ", " + fullAddress
+            orderResult.customer = customer
             await this.orderRepository.save(orderResult);
             if (orderResult) {
                 let response = orderResult;

@@ -8,6 +8,8 @@ import { CustomerModule } from '../customer/customer.module';
 import { DeliveryModule } from '../delivery/delivery.module';
 import { TransactionModule } from '../transaction/transaction.module';
 import { PaymentModule } from '../payment/payment.module';
+import Account from '../account/account.entity';
+import { AccountModule } from '../account/account.module';
 
 @Module({
   imports: [
@@ -16,7 +18,8 @@ import { PaymentModule } from '../payment/payment.module';
     MealModule,
     CustomerModule,
     DeliveryModule,
-    TransactionModule
+    TransactionModule,
+    CustomerModule
   ],
   providers: [OrderService],
   controllers: [OrderController],

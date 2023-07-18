@@ -187,14 +187,12 @@ export class OrderRepository extends Repository<Order> {
         await queryRunner.connect();
         await queryRunner.startTransaction('READ COMMITTED');
         try {
-            const account = await this.manager.findOne('Account', {
-                where: { id: user.id }
-            })
-            console.log('Account at createOrder repo: ', account);
-            const customer = await this.manager.findOne('Customer', {
-                where: { account: account }
-            }) //Finding customer to create order
-            console.log('Customer at createOrder repo: ', customer);
+            // const account = await this.manager.findOne('Account', {
+            //     where: { id: user.id }
+            // })
+            // const customer = await this.manager.findOne('Customer', {
+            //     where: { account: account }
+            // }) //Finding customer to create order
             const order = await queryRunner.manager.save( //Creating order
                 queryRunner.manager.create('Order', {
                     name: data.name,
@@ -204,10 +202,8 @@ export class OrderRepository extends Repository<Order> {
                     shippingDistrictCode: data.shippingDistrictCode,
                     totalPrice: 0,
                     orderCode: '',
-                    customer: customer,
                 })
             )
-            console.log('Order created: ', order)
             const meals = data.meals; //By the following data assign, have array object meals=[{ "id", "amount" }], get this to prepare create order detail
             let totalPriceOrder = 0;
             for (let i = 0; i < meals.length; i++) {
