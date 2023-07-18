@@ -66,7 +66,6 @@ export class OrderRepository extends Repository<Order> {
                 .leftJoinAndSelect('orderDetails.meal', 'meal')
                 .leftJoinAndSelect('meal.productMeals', 'productMeals')
                 .leftJoinAndSelect('productMeals.product', 'product')
-                .where('customer.userId = :id', { id: id })
                 .select([
                     'order.id',
                     'order.name',
@@ -93,8 +92,9 @@ export class OrderRepository extends Repository<Order> {
                     'product.price',
                     'product.remainQuantity'
                 ])
+                .where('customer.userId = :userId', { userId: id })
             if (status !== undefined) {
-                query.where('order.orderStatus = :status', { status: status })
+                query.andWhere('order.orderStatus = :status', { status: status })
             }
             const order = await query.getMany();
             return new ApiResponse('Success', 'Get all order successfully', order);
