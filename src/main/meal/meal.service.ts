@@ -22,9 +22,9 @@ export class MealService {
         private readonly productService: ProductService
     ) { }
 
-    async getAllMeal(): Promise<any | undefined> {
+    async getAllMeal(user: Account): Promise<any | undefined> {
         try {
-            const meals = await this.mealRepository.getAllMeals();
+            const meals = await this.mealRepository.getAllMeals(user);
             if (meals) {
                 return new ApiResponse('Success', 'Get all meals successfully', meals);
             }
@@ -54,7 +54,6 @@ export class MealService {
             throw new HttpException(new ApiResponse('Fail', err.message), err.status || HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
-
 
     async getMealByBird(birdId: string): Promise<any | undefined> {
         try {
@@ -220,6 +219,14 @@ export class MealService {
             if (meal) {
                 return new ApiResponse('Success', 'Get details meals successfully', meal);
             }
+        } catch (err) {
+            throw new HttpException(new ApiResponse('Fail', err.message), err.status || HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+    async updateMealStatus(mealId: string, user: Account): Promise<any | undefined> {
+        try {
+            return await this.mealRepository.updateMealStatus(mealId, user);
         } catch (err) {
             throw new HttpException(new ApiResponse('Fail', err.message), err.status || HttpStatus.INTERNAL_SERVER_ERROR)
         }

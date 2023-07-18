@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { MealService } from './meal.service';
 import { MealCreateDto } from './dto/meal-create.dto';
 import { ApiBearerAuth, ApiBody, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
@@ -32,10 +32,10 @@ export class MealController {
     async getAllMealByTitle(@Query('title') title: string, @Query('idBird') idBird: string) {
         return await this.mealService.getAllMealByTitle(title, idBird);
     }
-    
+
     @Get('/')
-    async getAllMeal() {
-        return await this.mealService.getAllMeal();
+    async getAllMeal(@GetUser() user: Account) {
+        return await this.mealService.getAllMeal(user);
     }
 
     @Get('/customer')
@@ -51,13 +51,20 @@ export class MealController {
     async updateMealByCustomer(@GetUser() user: Account, @Body() data: MealUpdateDto) {
         return await this.mealService.updateMeal(data, user);
     }
+
     @Get('detail/:mealId')
     async getMealDetail(@Param('mealId') mealId: string) {
         return await this.mealService.getMealDetail(mealId);
     }
+
     @Get('bird/:birdId')
     async getMealByBird(@Param('birdId') birdId: string) {
         return await this.mealService.getMealByBird(birdId);
+    }
+
+    @Put('status/:mealId')
+    async deleteMeal(@Param('mealId') meaId: string, @GetUser() user: Account): Promise<any | undefined> {
+        return await this.mealService.updateMealStatus(meaId, user);
     }
 
 }
