@@ -117,6 +117,8 @@ export default class AccountRepository extends Repository<Account> {
                 const account = await this.findOne({
                     where: { id: userId }
                 });
+
+                console.log('Log user updated: ', account)
                 const { password, ...rest } = account;
                 return rest;
             }
