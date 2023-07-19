@@ -123,6 +123,7 @@ export default class AccountRepository extends Repository<Account> {
                 return rest;
             }
         } catch (err) {
+            console.log('Error at update user: ', err);
             return null;
         }
     }
