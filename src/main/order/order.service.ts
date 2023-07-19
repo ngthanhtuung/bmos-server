@@ -66,7 +66,6 @@ export class OrderService {
     async createOrder(order: OrderCreateDto, user: Account): Promise<any | undefined> {
         try {
             const customer = await this.customerService.getUser(user.id);
-            console.log('Customer: ', customer)
             const meals = order.meals
             const unavailableProducts = await this.mealService.checkMealAvailability(meals);
             if (unavailableProducts.length !== 0) {
