@@ -31,8 +31,8 @@ export class PaymentService {
 
     async createPayment(order: Order): Promise<string> {
         const requestId = uuidv4();
-        const orderId = order.id;
-        const orderInfo = `Thanh Toán đơn hàng #${orderId}`;
+        const orderId = uuidv4();
+        const orderInfo = `Thanh Toán đơn hàng #${order.id}`;
         const requestType = 'captureWallet';
         const extraData = '';
         const amount = order.totalPrice;
@@ -91,49 +91,18 @@ export class PaymentService {
         }
     }
 
+    async rePayment(orderId: string): Promise<any | undefined> {
+        try {
+            const order = await this.orderService.getOrder(orderId);
+            if (order && order.orderStatus === OrderStatusEnum.CREATED) {
+                const payUrl = await this.createPayment(order);
+                return new ApiResponse('Success', 'Re-Payment successfully!', payUrl);
+            }
+            throw new HttpException(new ApiResponse('Fail', 'Re-payment failed!'), HttpStatus.BAD_REQUEST)
+        } catch (err) {
+            console.error('MoMo rePayment error:', err.response?.data || err.message);
+            throw new HttpException(new ApiResponse('Fail', err.message), err.status || HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
 
-    // async refundPayment(order: Order): Promise<any | undefined> {
-    //     try {
-    //         const transaction = await this.transactionService.getTransactionByOrder(order);
-    //         console.log('Refund transaction id: ', transaction.momoTransactionId)
-    //         if (transaction !== undefined && transaction.paymentType == 'MOMO') {
-    //             const requestId = uuidv4();
-    //             const orderId = order.id
-    //             const amount = order.totalPrice;
-    //             const transId = Number(transaction.momoTransactionId)
-    //             const lang = 'vi';
-    //             const description = `Hoàn tiền đơn hàng #${orderId}`;
-    //             const rawSignature = `accessKey=${this.accessKey}&amount=${amount}&description=${description}&orderId=${orderId}&partnerCode=${this.partnerCode}&requestId=${requestId}&transId=${transId}`;
-    //             const signature = crypto
-    //                 .createHmac('sha256', this.secretKey)
-    //                 .update(rawSignature)
-    //                 .digest('hex');
-    //             const requestBody = {
-    //                 partnerCode: this.partnerCode,
-    //                 orderId,
-    //                 requestId,
-    //                 amount,
-    //                 transId,
-    //                 lang,
-    //                 description,
-    //                 signature,
-    //             }
-    //             console.log('Request body in refund payment: ', requestBody)
-    //             const response = await axios.post(
-    //                 'https://test-payment.momo.vn/v2/gateway/api/refund',
-    //                 requestBody,
-    //                 {
-    //                     headers: {
-    //                         'Content-Type': 'application/json',
-    //                     },
-    //                 },
-    //             );
-    //             console.log(`Response refund #{order.id}: `, response.data);
-    //             return true;
-    //         }
-    //     } catch (err) {
-    //         console.error('MoMo refundPayment error:', err.response?.data || err.message);
-    //         throw new HttpException(new ApiResponse('Fail', err.message), err.status || HttpStatus.INTERNAL_SERVER_ERROR)
-    //     }
-    // }
 }

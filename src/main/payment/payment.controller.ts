@@ -1,9 +1,14 @@
-import { Controller, Query, Post, Get, HttpException, Res, Redirect, Param } from '@nestjs/common';
+import { Controller, Query, Post, Get, HttpException, Res, Redirect, Param, UseGuards } from '@nestjs/common';
 import { PaymentService } from './payment.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../auth/jwt-auth/jwt-auth.guard';
+import { RolesGuard } from '../auth/role/roles.guard';
+import { hasRoles } from '../auth/role/roles.decorator';
+import { RoleEnum } from '../role/role.enum';
 
 @Controller('payment')
 @ApiTags('Payment')
+
 export class PaymentController {
 
 
@@ -27,11 +32,18 @@ export class PaymentController {
         @Query('extraData') extraData: string,
         @Query('signature') signature: string
     ): Promise<any | undefined> {
-        return await this.paymentService.confirmPayment(orderId, resultCode, transId);
+        const confirmOrderId = orderInfo.split('#')[1];
+        return await this.paymentService.confirmPayment(confirmOrderId, resultCode, transId);
     }
 
-    // @Post()
-    // async createPayment(@Query('amount') amount: string): Promise<string> {
-    //     return this.paymentService.createPayment(amount);
-    // }
+
+    @Post('/re-payment/:orderId')
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @hasRoles(RoleEnum.CUSTOMER)
+    async rePayment(@Param('orderId') orderId: string): Promise<any | undefined> {
+        return await this.paymentService.rePayment(orderId)
+    }
+
+
 }

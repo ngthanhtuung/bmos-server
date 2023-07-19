@@ -135,7 +135,7 @@ export class MealRepository extends Repository<Meal> {
                 'meal.title',
                 'meal.description',
                 'meal.image',
-                'meal.birdId',
+                'bird.id',
                 'productMeal.amount',
                 'productMeal.section',
                 'product.id',
@@ -146,6 +146,9 @@ export class MealRepository extends Repository<Meal> {
                 'product.status'
             ])
             .where('bird.id = :birdId', { birdId })
+            .andWhere({
+                createdBy: ''
+            })
             .getMany();
         meal.map((i: any) => {
             i.productMeals = this.handleSectionProduct(meal)
