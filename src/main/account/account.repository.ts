@@ -93,7 +93,6 @@ export default class AccountRepository extends Repository<Account> {
                     'staff.identityNumber',
                     'staff.registerDate',
                     'staff.quitDate'
-
                 ])
                 .where('account.id = :id', { id: account.id })
                 .getOne();
@@ -117,7 +116,6 @@ export default class AccountRepository extends Repository<Account> {
                 const account = await this.findOne({
                     where: { id: userId }
                 });
-
                 console.log('Log user updated: ', account)
                 const { password, ...rest } = account;
                 return rest;

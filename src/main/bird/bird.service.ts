@@ -61,14 +61,14 @@ export class BirdService {
 
     async updateBird(birdId: string, data: BirdUpdateDto): Promise<any | undefined> {
         try {
-
             const bird = await this.getBirdById(birdId);
             if (bird) {
                 bird.birdName = data.birdName,
-                    bird.color = data.birdColor,
+                    bird.birdColor = data.birdColor,
                     bird.images = data.images,
                     bird.status = data.status
                 const updateBird = await this.birdRepository.save(bird);
+                return new ApiResponse('Success', 'Update bird successfully', updateBird)
             }
             throw new HttpException(new ApiResponse('Fail', 'Bird not found'), HttpStatus.NOT_FOUND)
         } catch (err) {
